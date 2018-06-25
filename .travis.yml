@@ -8,7 +8,7 @@ android:
     - build-tools-27.0.3
     - android-27
     - android-25 //Android platform used by alternative emulator
-    - sys-img-armeabi-v7a-android-22
+    - sys-img-armeabi-v7a-android-25
 
 notifications:
   - email: false
