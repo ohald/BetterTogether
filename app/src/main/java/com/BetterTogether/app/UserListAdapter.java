@@ -8,12 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MyAdapter extends BaseAdapter {
+public class UserListAdapter extends BaseAdapter {
 
     private LayoutInflater inflater;
     private String[] dataSet;
 
-    public MyAdapter(Context context, String[] dataSet){
+    public UserListAdapter(Context context, String[] dataSet){
         this.dataSet = dataSet;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -45,7 +45,6 @@ public class MyAdapter extends BaseAdapter {
         View rowView = inflater.inflate(R.layout.example_list, parent, false);
 
         TextView name = rowView.findViewById(R.id.username);
-        ImageView image = rowView.findViewById(R.id.profile_image);
 
         name.setText(dataSet[position]);
         return rowView;
