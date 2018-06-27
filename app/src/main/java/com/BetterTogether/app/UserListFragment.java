@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 
 import java.util.ArrayList;
@@ -27,6 +28,20 @@ public class UserListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         gridView = getView().findViewById(R.id.user_list);
+        Button okBtn = getView().findViewById(R.id.create_pair_button);
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createPair();
+            }
+        });
+        Button cancelBtn = getView().findViewById(R.id.reset_selection_button);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetSelectedPersons();
+            }
+        });
         selectedItems = new ArrayList<>();
 
         UserListAdapter adapter = new UserListAdapter(this.getContext(), testData);
@@ -50,5 +65,17 @@ public class UserListFragment extends Fragment {
 
         selectedItems.add(position);
         gridView.getChildAt(position).setBackgroundColor(Color.argb(126, 0, 255, 0));
+    }
+
+    public void createPair() {
+        //TODO: Add pair to db
+        resetSelectedPersons();
+    }
+
+    public void resetSelectedPersons() {
+        for (Integer i : selectedItems)
+            gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+
+        selectedItems.clear();
     }
 }
