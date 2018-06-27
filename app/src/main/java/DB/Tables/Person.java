@@ -6,9 +6,6 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 
 
 
@@ -30,6 +27,14 @@ public class Person {
 
     public Person(@NonNull String username) {
         this.username = username.toLowerCase();
+    }
+
+    @Ignore
+    public Person(@NonNull String username, String firstName, String lastName, byte[] image) {
+        this.username = username.toLowerCase();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.image = image;
     }
 
     @Ignore
@@ -71,13 +76,5 @@ public class Person {
         return image;
     }
 
-
-    public static Person[] initialUsers(){
-        Person[] p = new Person[3];
-        p[0] = (new Person("esog", "Eirin", "Sognnes"));
-        p[1] = (new Person("ohald", "øyvor", "haldorsen"));
-        p[2] = (new Person("mleik", "magnus", "leikvoll"));
-        return p;
-    }
 
 }

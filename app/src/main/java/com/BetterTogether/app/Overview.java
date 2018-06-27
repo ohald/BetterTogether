@@ -4,10 +4,11 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-
+import android.util.Log;
 import DB.DatabaseThreadHandler;
-import DB.SQLiteDB;
+import DB.RewardType;
 
+import DB.SQLiteDB;
 
 public class Overview extends AppCompatActivity {
 
@@ -17,23 +18,32 @@ public class Overview extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createDBWithHandler();
         setContentView(R.layout.activity_overview);
+        createDBWithHandler();
 
         setSupportActionBar(findViewById(R.id.toolbar));
-
         TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager(), new UserListFragment(), new GraphFragment());
         ViewPager viewPager = findViewById(R.id.pager);
         viewPager.setAdapter(tabAdapter);
-
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.bringToFront();
         tabLayout.setupWithViewPager(viewPager);
+        //checkDB();
+
     }
 
-    private void createDBWithHandler(){
+    private void createDBWithHandler() {
         db = SQLiteDB.getInstance(this);
         handler = new DatabaseThreadHandler(this);
     }
+
+
+    /*
+    private void checkDB() {
+        handler.getThreshold(RewardType.CAKE)
+                .subscribe(reward -> Log.d("DATABASE-REWARD-CAKE-50"
+                , Integer.toString(reward)));
+    }*/
+
 
 }

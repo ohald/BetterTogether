@@ -18,6 +18,7 @@ import DB.Tables.Pair;
 import DB.Tables.Person;
 import DB.Tables.Reward;
 import DB.Tables.Threshold;
+import JSONReader.JSONReader;
 
 @Database(entities = {Person.class, Pair.class, Reward.class, Threshold.class}, version = 2, exportSchema = false)
 @TypeConverters({DataConverter.class})
@@ -42,8 +43,8 @@ public abstract class SQLiteDB extends RoomDatabase {
                         public void onCreate(@NonNull SupportSQLiteDatabase db) {
                             super.onCreate(db);
                             Executors.newSingleThreadExecutor().execute(() -> {
-                                        getInstance(context).personDao().insertAll(Person.initialUsers());
-                                        getInstance(context).rewardDao().addThresholds(Threshold.initialThresholds());
+                                        getInstance(context).personDao().insertAll(JSONReader.parsePersonsFromJSON(context));
+                                        getInstance(context).rewardDao().addThresholds(JSONReader.parseThresholdsFromJSON(context));
                                     }
                             );
                         }
