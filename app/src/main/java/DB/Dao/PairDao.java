@@ -3,6 +3,7 @@ package DB.Dao;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import java.util.Date;
@@ -26,7 +27,7 @@ public interface PairDao {
     int getPairProgrammingTotalFromDate(Date date);
 
     @Insert
-    void insertPair(Pair pair);
+    long insertPair(Pair pair);
 
     @Delete
     void deletePair(Pair pair);

@@ -44,7 +44,7 @@ public class RewardTest {
     private void addEntriesToDB(){
         mRewardDao.addReward(pizzaReward);
         mRewardDao.addReward(cakeReward);
-        mRewardDao.addThreshold(cakeThreshold);
+        mRewardDao.addThresholds(cakeThreshold);
     }
 
     @After
@@ -59,7 +59,7 @@ public class RewardTest {
 
     @Test
     public void getLastRewardDateFindsTheNewestDate(){
-      assertThat(d, equalTo(mRewardDao.getLastRewardDate()));
+      assertThat(d, equalTo(mRewardDao.getLastRewardDate(RewardType.CAKE)));
     }
 
     @Test
