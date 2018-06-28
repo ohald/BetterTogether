@@ -10,7 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class GraphFragment extends Fragment {
-    private static final String GRAPH_PATH = "file:///android_asset/html/force_graph.html";
+    private static final String GRAPH_PATH = "file:///android_asset/html/graph_display.html";
 
     private WebView webView;
 

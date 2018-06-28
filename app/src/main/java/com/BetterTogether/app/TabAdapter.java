@@ -1,6 +1,5 @@
 package com.BetterTogether.app;
 
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -36,7 +35,6 @@ public class TabAdapter extends FragmentStatePagerAdapter {
         return NUM_TABS;
     }
 
-    @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
         return TAB_TITLES[position];
