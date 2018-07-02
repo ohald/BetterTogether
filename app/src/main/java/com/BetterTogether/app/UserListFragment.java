@@ -43,6 +43,8 @@ public class UserListFragment extends Fragment {
         numPairs = getView().findViewById(R.id.num_of_pairs);
         handler = new DatabaseThreadHandler(getContext());
 
+        Button add_user = getView().findViewById(R.id.add_user);
+
         Button okBtn = getView().findViewById(R.id.create_pair_button);
         okBtn.setOnClickListener(view1 -> createPair());
 
