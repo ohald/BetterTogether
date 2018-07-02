@@ -6,7 +6,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-
+import java.util.Objects;
 
 
 @Entity(tableName = "people_table")
@@ -76,5 +76,16 @@ public class Person {
         return image;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(username, person.username);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
+    }
 }

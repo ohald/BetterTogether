@@ -9,6 +9,8 @@ import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 import DB.Dao.PairDao;
@@ -48,10 +50,35 @@ public abstract class SQLiteDB extends RoomDatabase {
                                     }
                             );
                         }
+                        @Override
+                        public void onOpen(@NonNull SupportSQLiteDatabase db){
+                            Executors.newSingleThreadExecutor().execute(() -> {
+                                List<Person> curPersons = getInstance(context).personDao().getAllPersons();
+                                List<Person> newPersons = Arrays.asList(JSONReader.parsePersonsFromJSON(context));
+
+                                if (curPersons.equals(newPersons))
+                                    return;
+                                updatePersonsInDatabase(curPersons, newPersons, context);
+                            });
+                        }
                     })
                     .build();
         }
         return INSTANCE;
+    }
 
+    /**
+     * Add persons that exist in json-file user, but not in database, to database.
+     * TODO: What about persons that exist in database, but not in file?
+     * @param curPersons
+     * @param newPersons
+     * @param context
+     */
+    private static void updatePersonsInDatabase(List<Person> curPersons, List<Person> newPersons, Context context){
+            for (Person p : newPersons) {
+                if (!curPersons.contains(p)) {
+                    getInstance(context).personDao().insertPerson(p);
+                }
+            }
     }
 }
