@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import DB.Tables.Person;
+import JSONReader.ImageReader;
 
 public class UserListAdapter extends BaseAdapter {
 
@@ -47,9 +48,19 @@ public class UserListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         View rowView = inflater.inflate(R.layout.example_list, parent, false);
+
+        //set images to corresponding users
+        byte[] image = dataSet.get(position).getImage();
+        ImageView imageView = rowView.findViewById(R.id.profile_image);
+        ImageReader reader = new ImageReader();
+        Bitmap bitmap = reader.byteArrayToBitmap(image);
+        imageView.setImageBitmap(bitmap);
+
+
         TextView name = rowView.findViewById(R.id.username);
         String displayedText = dataSet.get(position).getFirstName() + " " + dataSet.get(position).getLastName();
         name.setText(displayedText);
         return rowView;
     }
+
 }

@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import DB.DatabaseThreadHandler;
-import DB.RewardType;
-
 import DB.SQLiteDB;
+
 
 public class Overview extends AppCompatActivity {
 
@@ -28,7 +26,6 @@ public class Overview extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.bringToFront();
         tabLayout.setupWithViewPager(viewPager);
-        //checkDB();
 
     }
 
@@ -36,7 +33,6 @@ public class Overview extends AppCompatActivity {
         db = SQLiteDB.getInstance(this);
         handler = new DatabaseThreadHandler(this);
     }
-
 
     /*
     private void checkDB() {

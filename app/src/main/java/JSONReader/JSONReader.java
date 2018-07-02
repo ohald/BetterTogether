@@ -1,6 +1,7 @@
 package JSONReader;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.BetterTogether.app.R;
@@ -15,6 +16,8 @@ import java.io.InputStream;
 
 public class JSONReader {
 
+    private static ImageReader reader = new ImageReader();
+
     private static ParsedPerson[] getJsonPersonFromJsonFile(Context context) {
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -24,8 +27,6 @@ public class JSONReader {
             is.read(buffer);
             is.close();
             String json = new String(buffer, "UTF-8");
-
-
             ParsedPerson[] parsedPeople  = mapper.readValue(json, new TypeReference<ParsedPerson[]>(){});
             return parsedPeople;
         } catch(Exception e){
@@ -39,7 +40,8 @@ public class JSONReader {
         Person[] personEntries = new Person[parsedPeople.length];
         for(int i = 0; i < parsedPeople.length; i++){
             ParsedPerson p = parsedPeople[i];
-            Person newP = new Person(p.getUsername(), p.getFirstname(), p.getLastname());
+            byte[] image = getImage(context, p.getImage());
+            Person newP = new Person(p.getUsername(), p.getFirstname(), p.getLastname(), image);
             personEntries[i] = newP;
         }
 
@@ -56,8 +58,6 @@ public class JSONReader {
             is.read(buffer);
             is.close();
             String json = new String(buffer, "UTF-8");
-
-
             ParsedThreshold[] parsedThresholds  = mapper.readValue(json, new TypeReference<ParsedThreshold[]>(){});
             return parsedThresholds;
         } catch(Exception e){
@@ -79,8 +79,8 @@ public class JSONReader {
     }
 
 
-    private byte[] getImage(){
-        //TODO: write method to get image for databasefriendly storage
-        return null;
+    private static byte[] getImage(Context context, String imgname){
+        Bitmap bitmap = reader.imageToBitmap(context, imgname);
+        return reader.bitmapToByte(bitmap);
     }
 }
