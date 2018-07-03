@@ -29,6 +29,8 @@ import DB.Tables.Pair;
 import DB.Tables.Person;
 import io.reactivex.disposables.Disposable;
 
+import static android.app.Activity.RESULT_OK;
+
 public class UserListFragment extends Fragment {
 
     private ArrayList<Integer> selectedItems;
@@ -142,7 +144,7 @@ public class UserListFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             user_image.setImageBitmap(imageBitmap);
@@ -153,8 +155,11 @@ public class UserListFragment extends Fragment {
     private void submitUser(Dialog dlog, EditText username, EditText firstName, EditText lastName){
         dlog.dismiss();
         Person newUser = new Person(username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
-        Toast.makeText(getContext(), "Hei "+newUser.getUsername(), Toast.LENGTH_SHORT).show();
-        //Toast.makeText(getContext(), "User added", Toast.LENGTH_SHORT).show();
+        if (users.contains(newUser)){
+            Toast.makeText(getContext(), "User already exists", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(getContext(), "Welcome "+newUser.getUsername(), Toast.LENGTH_SHORT).show();
     }
 
     private void writePairCountToScreen() {
