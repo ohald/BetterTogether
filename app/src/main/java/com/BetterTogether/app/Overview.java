@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import DB.DatabaseThreadHandler;
 import DB.SQLiteDB;
+import JSONReader.ParsedPerson;
 
 
 public class Overview extends AppCompatActivity {
@@ -32,6 +33,13 @@ public class Overview extends AppCompatActivity {
     private void createDBWithHandler() {
         db = SQLiteDB.getInstance(this);
         handler = new DatabaseThreadHandler(this);
+    }
+
+    private void testAddToJSONFile(){
+        ParsedPerson p = new ParsedPerson();
+        p.setUsername("json");
+        p.setFirstname("test");
+        p.setLastname("write");
     }
 
     /*

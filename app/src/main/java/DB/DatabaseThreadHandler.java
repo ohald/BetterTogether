@@ -37,6 +37,13 @@ public class DatabaseThreadHandler {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Maybe<List<Person>> allActivePersons(){
+        return Maybe.fromCallable(()
+                -> personDao.getAllActivePersons())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Single<Long> addPair(Pair pair) {
         return Single.fromCallable(()
                 -> pairDao.insertPair(pair))

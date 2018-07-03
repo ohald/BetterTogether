@@ -52,8 +52,7 @@ public class UserListAdapter extends BaseAdapter {
         //set images to corresponding users
         byte[] image = dataSet.get(position).getImage();
         ImageView imageView = rowView.findViewById(R.id.profile_image);
-        ImageReader reader = new ImageReader();
-        Bitmap bitmap = reader.byteArrayToBitmap(image);
+        Bitmap bitmap = ImageReader.byteArrayToBitmap(image);
         imageView.setImageBitmap(bitmap);
 
 

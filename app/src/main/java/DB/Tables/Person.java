@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 
 import java.util.Objects;
 
+import JSONReader.ImageReader;
+
 
 @Entity(tableName = "people_table")
 public class Person {
@@ -15,12 +17,9 @@ public class Person {
     @PrimaryKey
     @NonNull
     private String username;
-
-    @ColumnInfo
     private String firstName;
-
-    @ColumnInfo
     private String lastName;
+    private boolean active;
 
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     private byte[] image;
@@ -35,6 +34,16 @@ public class Person {
         this.firstName = firstName;
         this.lastName = lastName;
         this.image = image;
+        this.active = true;
+    }
+
+    @Ignore
+    public Person(@NonNull String username, String firstName, String lastName, byte[] image, boolean isActive) {
+        this.username = username.toLowerCase();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.image = image;
+        this.active = isActive;
     }
 
     @Ignore
@@ -44,6 +53,13 @@ public class Person {
         this.lastName = lastName;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        active = active;
+    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -52,7 +68,6 @@ public class Person {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
 
     public String getUsername() {
         return username;

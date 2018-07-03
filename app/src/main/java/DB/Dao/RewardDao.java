@@ -19,6 +19,9 @@ public interface RewardDao {
     @Query("SELECT threshold FROM threshold_table WHERE type=:type")
     int getThreshold(RewardType type);
 
+    @Query("SELECT COUNT(*) FROM threshold_table")
+    int getEntries();
+
     @Query("SELECT date FROM reward_table WHERE date = (SELECT max(date) FROM reward_table) AND type = :type")
     Date getLastRewardDate(RewardType type);
 
@@ -37,6 +40,9 @@ public interface RewardDao {
 
     @Insert
     long addReward(Reward reset);
+
+    @Insert
+    long[] addReward(Reward ... reset);
 
     @Insert(onConflict = REPLACE)
     long[] addThresholds(Threshold ... newThresholds);

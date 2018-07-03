@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import java.util.Date;
 import java.util.List;
@@ -26,8 +27,17 @@ public interface PairDao {
     @Query("SELECT COUNT(*) AS pairProgramTotalFromDate FROM pair_table WHERE date >= :date")
     int getPairProgrammingTotalFromDate(Date date);
 
+    @Query("SELECT * FROM pair_table WHERE person1 =:person OR person2 =:person")
+    List<Pair> getPairProgrammingPairs(String person);
+
+    @Query("SELECT * FROM pair_table WHERE date =:date")
+    Pair getPair(Date date);
+
     @Insert
     long insertPair(Pair pair);
+
+    @Update
+    int updatePair(Pair pair);
 
     @Delete
     void deletePair(Pair pair);

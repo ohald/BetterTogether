@@ -12,7 +12,7 @@ import java.io.InputStream;
 
 public class ImageReader {
 
-    public Bitmap imageToBitmap(Context c, String imgname) {
+    public static Bitmap imageToBitmap(Context c, String imgname) {
         AssetManager assetManager = c.getAssets();
        try {
             InputStream istr = assetManager.open("images/" + imgname + ".png");
@@ -25,7 +25,7 @@ public class ImageReader {
         }
     }
 
-    public byte[] bitmapToByte(Bitmap bitmap) {
+    public static byte[] bitmapToByte(Bitmap bitmap) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -38,7 +38,11 @@ public class ImageReader {
         }
     }
 
-    public Bitmap byteArrayToBitmap(byte[] image) {
+    public static byte[] imageToByte(Context c, String imgname){
+        return bitmapToByte(imageToBitmap(c, imgname));
+    }
+
+    public static Bitmap byteArrayToBitmap(byte[] image) {
         //turn byte[] to bitmap
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }

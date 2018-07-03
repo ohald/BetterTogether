@@ -49,7 +49,7 @@ public class UserListFragment extends Fragment {
         Button cancelBtn = getView().findViewById(R.id.reset_selection_button);
         cancelBtn.setOnClickListener(view12 -> resetSelectedPersons());
         selectedItems = new ArrayList<>();
-        Disposable d = handler.allPersons().subscribe(
+        Disposable d = handler.allActivePersons().subscribe(
                 persons -> setUpGridView(persons),
                 error -> Toast.makeText(getContext(), "Failed loading users from database", Toast.LENGTH_SHORT).show());
         writePairCountToScreen();

@@ -1,7 +1,5 @@
 package JSONReader;
 
-import android.util.Log;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,14 +9,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "username",
         "firstname",
         "lastname",
-        "image"
+        "image",
+        "active"
 })
 public class ParsedPerson {
     @JsonProperty("username")
@@ -33,6 +31,8 @@ public class ParsedPerson {
     @JsonProperty("image")
     private String image;
 
+    @JsonProperty("active")
+    private String active;
 
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -76,6 +76,18 @@ public class ParsedPerson {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
+
+    @JsonProperty("active")
+    public void setActive(String active){
+        this.active = active;
+    }
+
+    @JsonProperty("active")
+    public boolean getActive(){
+        if(active == null) return true;
+       return active.equals("false") ? false : true;
+    }
+
 
     @JsonProperty("image")
     public String getImage() {
