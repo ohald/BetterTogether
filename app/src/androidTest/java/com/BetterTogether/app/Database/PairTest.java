@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class PairTest {
 
@@ -31,6 +32,8 @@ public class PairTest {
     private Pair pair;
     private GregorianCalendar calendar = new GregorianCalendar(1900, 01,1,00,00,00);
     private Date date = new Date(calendar.getTimeInMillis());
+
+    private Date testDate = new Date();
 
     @Before
     public void createDb() {
@@ -51,10 +54,21 @@ public class PairTest {
         mPersonDao.insertPerson(esog);
         mPersonDao.insertPerson(ohald);
 
-        this.pair = new Pair(new Date());
+        this.pair = new Pair(testDate);
         pair.setPerson1("esog");
         pair.setPerson2("ohald");
         mPairDao.insertPair(pair);
+    }
+
+    @Test
+    public void updatingSecondPersonInPairChangesSecondPersonInPair(){
+        addPairToDB();
+        mPersonDao.insertPerson(new Person("other"));
+        this.pair.setPerson2("other");
+        mPairDao.updatePair(pair);
+
+        assertThat("other", equalTo(mPairDao.getPair(testDate).getPerson2()));
+        assertThat(1, equalTo(mPairDao.getPairProgrammingTotalFromDate(date)));
     }
 
 

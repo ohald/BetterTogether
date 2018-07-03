@@ -1,7 +1,6 @@
 package DB;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +33,13 @@ public class DatabaseThreadHandler {
     public Maybe<List<Person>> allPersons(){
         return Maybe.fromCallable(()
                 -> personDao.getAllPersons())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Maybe<List<Person>> allActivePersons(){
+        return Maybe.fromCallable(()
+                -> personDao.getAllActivePersons())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

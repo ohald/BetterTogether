@@ -6,10 +6,9 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import java.util.Objects;
 
-
+import JSONReader.ImageReader;
 
 
 @Entity(tableName = "people_table")
@@ -18,12 +17,9 @@ public class Person {
     @PrimaryKey
     @NonNull
     private String username;
-
-    @ColumnInfo
     private String firstName;
-
-    @ColumnInfo
     private String lastName;
+    private boolean active;
 
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     private byte[] image;
@@ -33,12 +29,37 @@ public class Person {
     }
 
     @Ignore
+    public Person(@NonNull String username, String firstName, String lastName, byte[] image) {
+        this.username = username.toLowerCase();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.image = image;
+        this.active = true;
+    }
+
+    @Ignore
+    public Person(@NonNull String username, String firstName, String lastName, byte[] image, boolean isActive) {
+        this.username = username.toLowerCase();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.image = image;
+        this.active = isActive;
+    }
+
+    @Ignore
     public Person(@NonNull String username, String firstName, String lastName) {
         this.username = username.toLowerCase();
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        active = active;
+    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -47,7 +68,6 @@ public class Person {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
 
     public String getUsername() {
         return username;
@@ -71,13 +91,16 @@ public class Person {
         return image;
     }
 
-
-    public static Person[] initialUsers(){
-        Person[] p = new Person[3];
-        p[0] = (new Person("esog", "Eirin", "Sognnes"));
-        p[1] = (new Person("ohald", "øyvor", "haldorsen"));
-        p[2] = (new Person("mleik", "magnus", "leikvoll"));
-        return p;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(username, person.username);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
+    }
 }

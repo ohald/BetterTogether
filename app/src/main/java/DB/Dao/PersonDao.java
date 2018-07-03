@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import java.util.List;
 
@@ -24,11 +25,18 @@ public interface PersonDao {
     @Query("SELECT COUNT(*) FROM people_table")
     int getNumberOfUsers();
 
+    //1 = true in sqlite
+    @Query("SELECT * FROM people_table WHERE active = 1")
+    List<Person> getAllActivePersons();
+
     @Insert
     void insertPerson(Person person);
 
     @Insert
     long[] insertAll(Person ... persons);
+
+    @Update
+    int updatePerson(Person person);
 
     @Delete
     //note, all usernames are lower case
