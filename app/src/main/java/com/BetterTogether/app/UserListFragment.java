@@ -1,13 +1,21 @@
 package com.BetterTogether.app;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +37,7 @@ public class UserListFragment extends Fragment {
 
     private GridView gridView;
     private TextView numPairs;
+    private ImageView user_image;
 
     private DatabaseThreadHandler handler;
 
@@ -44,6 +53,7 @@ public class UserListFragment extends Fragment {
         handler = new DatabaseThreadHandler(getContext());
 
         Button add_user = getView().findViewById(R.id.add_user);
+        add_user.setOnClickListener(view_user -> add_user());
 
         Button okBtn = getView().findViewById(R.id.create_pair_button);
         okBtn.setOnClickListener(view1 -> createPair());
@@ -93,6 +103,58 @@ public class UserListFragment extends Fragment {
                     resetSelectedPersons();
                 },
                 error -> Toast.makeText(getContext(), "Something went wrong while inserting to database.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void add_user() {
+        try {
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View popUpView = inflater.inflate(R.layout.popup_layout, null);
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
+            alertBuilder.setView(popUpView);
+            alertBuilder.setTitle("Create User");
+            EditText username = (EditText) popUpView.findViewById(R.id.username);
+            EditText firstName = (EditText) popUpView.findViewById(R.id.first_name);
+            EditText lastName = (EditText) popUpView.findViewById(R.id.last_name);
+            user_image = (ImageView) popUpView.findViewById(R.id.mImageView);
+            Button image = popUpView.findViewById(R.id.image);
+            Button add = popUpView.findViewById(R.id.add);
+            Button cancel = popUpView.findViewById(R.id.cancel);
+
+            AlertDialog dialog = alertBuilder.create();
+            dialog.show();
+
+            image.setOnClickListener(btn -> openCameraActivity());
+            add.setOnClickListener(btn -> submitUser(dialog, username, firstName, lastName));
+            cancel.setOnClickListener(btn -> dialog.dismiss());
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void openCameraActivity() {
+        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (camera.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(camera, 1);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            user_image.setImageBitmap(imageBitmap);
+        }
+    }
+
+
+    private void submitUser(Dialog dlog, EditText username, EditText firstName, EditText lastName){
+        dlog.dismiss();
+        Person newUser = new Person(username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
+        Toast.makeText(getContext(), "Hei "+newUser.getUsername(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "User added", Toast.LENGTH_SHORT).show();
     }
 
     private void writePairCountToScreen() {
