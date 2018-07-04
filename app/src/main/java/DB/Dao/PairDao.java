@@ -10,6 +10,7 @@ import android.arch.persistence.room.Update;
 import java.util.Date;
 import java.util.List;
 
+import DB.RewardType;
 import DB.Tables.Pair;
 
 
@@ -20,6 +21,9 @@ public interface PairDao {
 
     @Query("SELECT * FROM pair_table WHERE date>=:startTime")
     List<Pair> getHistory(Date startTime);
+
+    @Query("SELECT * FROM pair_table WHERE date>=(SELECT max(date) FROM reward_table WHERE type=:rewardType)")
+    List<Pair> getPairsSinceLastReward(RewardType rewardType);
 
     @Query("SELECT COUNT(*) AS pairProgramUserTotal FROM pair_table WHERE person1 = :user OR person2 = :user")
     int getTimesPairProgrammed(String user);

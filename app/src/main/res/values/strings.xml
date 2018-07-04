@@ -1,6 +1,11 @@
 <resources>
-    <string name="app_name">app</string>
-    <string name="cancel">cancel</string>
-    <string name="ok">ok</string>
-    <string name="pairs">Pairs: #</string>
+    <string name="app_name">BetterTogether</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+    <string name="ppm_num"># Events:</string>
+    <string name="reset">reset</string>
+    <string name="pizza_beer"><![CDATA[Pizza & Beer:]]></string>
+    <string name="cake">Cake:</string>
+    <string name="claimable">Available:</string>
+    <string name="last_ppm_event">Most recent:</string>
 </resources>

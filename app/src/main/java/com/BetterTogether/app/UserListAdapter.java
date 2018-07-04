@@ -47,14 +47,13 @@ public class UserListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        View rowView = inflater.inflate(R.layout.example_list, parent, false);
+        View rowView = inflater.inflate(R.layout.user_list_element, parent, false);
 
         //set images to corresponding users
         byte[] image = dataSet.get(position).getImage();
         ImageView imageView = rowView.findViewById(R.id.profile_image);
         Bitmap bitmap = ImageReader.byteArrayToBitmap(image);
         imageView.setImageBitmap(bitmap);
-
 
         TextView name = rowView.findViewById(R.id.username);
         String displayedText = dataSet.get(position).getFirstName() + " " + dataSet.get(position).getLastName();
