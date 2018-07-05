@@ -136,7 +136,7 @@ public class UserListFragment extends Fragment {
         try {
             LayoutInflater inflater = (LayoutInflater) getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View popupView = inflater.inflate(R.layout.popup_layout, null);
+            View popupView = inflater.inflate(R.layout.add_user_layout, null);
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
             builder.setView(popupView);
@@ -206,15 +206,19 @@ public class UserListFragment extends Fragment {
             return;
 
         if (cakePairs.size() == cakeThreshold) {
+            RewardPopup cakeReached = new RewardPopup(this);
+            cakeReached.whistle(RewardType.CAKE);
             cakePairs = null;
             unusedCake = -1;
             manager.addReward(RewardType.CAKE);
             return;
         }
 
-        if (pizzaPairs.size() == pizzaThreshold) {
-            pizzaPairs = null;
-            unusedPizza = -1;
+        if(pizzaPairs.size() == pizzaThreshold) {
+            RewardPopup pizzaReached = new RewardPopup(this);
+            pizzaReached.whistle(RewardType.PIZZA);
+            cakePairs = null;
+            unusedCake = -1;
             manager.addReward(RewardType.PIZZA);
             return;
         }
