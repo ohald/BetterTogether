@@ -5,9 +5,9 @@ var radius = width / 20;
 
 //test-users
 var users = [
-     {name: 'magnleik', image: "../images/magnleik.jpg", pairprog: 1},
-     {name: 'esog', image: "../images/esog.jpg", pairprog: 1},
-     {name: 'ohald', image: "../images/ohald.jpg", pairprog: 3},
+     {name: 'magnleik', image: "../images/magnleik.png", pairprog: 1},
+     {name: 'esog', image: "../images/esog.png", pairprog: 1},
+     {name: 'ohald', image: "../images/ohald.png", pairprog: 3},
 ];
 
 //test-pair-entries

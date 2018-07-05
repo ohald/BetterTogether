@@ -3,6 +3,7 @@ package com.BetterTogether.app;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -21,6 +22,7 @@ public class UserListDataManager {
     private DatabaseThreadHandler handler;
     private UserListFragment userListFragment;
     private List<Person> users;
+
 
     UserListDataManager(UserListFragment userListFragment, DatabaseThreadHandler handler) {
         this.userListFragment = userListFragment;
@@ -77,15 +79,19 @@ public class UserListDataManager {
         });
     }
 
-    void addUser(String userName, String firstName, String lastName) {
-        Person newUser = new Person(userName, firstName, lastName);
-        if (users.contains(newUser)) {
-            Toast.makeText(userListFragment.getContext(),
-                    "User already exists", Toast.LENGTH_SHORT).show();
+    @SuppressLint("CheckResult")
+    void addUser(String userName, String firstName, String lastName, byte[] img) {
+        Person newUser = new Person(userName, firstName, lastName, img, true);
+        if (users.contains(newUser)){
+            Toast.makeText(userListFragment.getContext(), "User already exists", Toast.LENGTH_SHORT).show();
             return;
         }
-        Toast.makeText(userListFragment.getContext(),
-                "Welcome " + newUser.getUsername(), Toast.LENGTH_SHORT).show();
+        handler.addPerson(newUser).subscribe(num -> {
+            Toast.makeText(userListFragment.getContext()
+                    , "Welcome " + newUser.getFirstName(), Toast.LENGTH_SHORT).show();
+            getActiveUsers();
+
+        });
     }
 
     @SuppressLint("CheckResult")

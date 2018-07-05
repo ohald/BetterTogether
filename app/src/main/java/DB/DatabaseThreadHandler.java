@@ -118,4 +118,11 @@ public class DatabaseThreadHandler {
                 .observeOn(as);
     }
 
+    public Single<Long> addPerson(Person person){
+        return Single.fromCallable(()
+                -> personDao.insertPerson(person))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
 }

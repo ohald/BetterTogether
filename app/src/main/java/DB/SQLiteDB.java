@@ -9,6 +9,7 @@ import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -48,14 +49,19 @@ public abstract class SQLiteDB extends RoomDatabase {
                             Executors.newSingleThreadExecutor().execute(() -> {
                                 getInstance(context).rewardDao().addThresholds(JSONReader.parseThresholdsFromJSON(context));
                                 getInstance(context).rewardDao().addReward(JSONReader.parseRewardFromJSON(context));
+                                //getInstance(context).personDao().insertAll(JSONReader.parsePersonsFromJson(context));
                             });
                         }
                         @Override
                         public void onOpen(@NonNull SupportSQLiteDatabase db) {
                             Executors.newSingleThreadExecutor().execute(() -> {
                                 List<Person> curPersons = getInstance(context).personDao().getAllPersons();
-                                List<Person> newPersons = Arrays.asList(JSONReader.parsePersonsFromJSON(context));
+                                Person[] newPersonsArray = JSONReader.parsePersonsFromJson(context);
 
+                                if(newPersonsArray == null)
+                                    return;
+
+                                List<Person> newPersons = Arrays.asList(newPersonsArray);
                                 if (curPersons.equals(newPersons))
                                     return;
                                 updatePersonsInDatabase(curPersons, newPersons, context);
@@ -85,7 +91,7 @@ public abstract class SQLiteDB extends RoomDatabase {
      */
     private static void updatePersonsInDatabase(List<Person> curPersons, List<Person> newPersons, Context context){
         addNewEntriesToDatabase(curPersons, newPersons, context);
-        setDeletedPersonEntriesToAnonymous(curPersons, newPersons, context);
+        //setDeletedPersonEntriesToAnonymous(curPersons, newPersons, context);
     }
 
     private static void addNewEntriesToDatabase(List<Person> curPersons, List<Person> newPersons, Context context){
@@ -96,6 +102,8 @@ public abstract class SQLiteDB extends RoomDatabase {
         }
     }
 
+    //Not useful when database cannot write to resources.
+    /*
     private static void setDeletedPersonEntriesToAnonymous(List<Person> curPersons, List<Person> newPersons, Context context) {
         PersonDao personDao = getInstance(context).personDao();
 
@@ -107,8 +115,10 @@ public abstract class SQLiteDB extends RoomDatabase {
                 p.setImage(ImageReader.imageToByte(context, "unknown"));
                 personDao.updatePerson(p);
             }
+
         }
 
     }
+    */
 
 }

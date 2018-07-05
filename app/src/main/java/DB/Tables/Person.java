@@ -38,19 +38,12 @@ public class Person {
     }
 
     @Ignore
-    public Person(@NonNull String username, String firstName, String lastName, byte[] image, boolean isActive) {
+    public Person(@NonNull String username, String firstName, String lastName, byte[] image, boolean active) {
         this.username = username.toLowerCase();
         this.firstName = firstName;
         this.lastName = lastName;
         this.image = image;
-        this.active = isActive;
-    }
-
-    @Ignore
-    public Person(@NonNull String username, String firstName, String lastName) {
-        this.username = username.toLowerCase();
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.active = active;
     }
 
     public boolean isActive() {

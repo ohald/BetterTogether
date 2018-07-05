@@ -30,7 +30,7 @@ public interface PersonDao {
     List<Person> getAllActivePersons();
 
     @Insert
-    void insertPerson(Person person);
+    long insertPerson(Person person);
 
     @Insert
     long[] insertAll(Person ... persons);

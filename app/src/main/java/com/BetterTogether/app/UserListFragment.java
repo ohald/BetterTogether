@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -34,6 +35,8 @@ import JSONReader.ImageReader;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+
+
 import static android.app.Activity.RESULT_OK;
 
 public class UserListFragment extends Fragment {
@@ -52,10 +55,14 @@ public class UserListFragment extends Fragment {
 
     private GridView gridView;
     private ImageView userImage;
+    private Bitmap userImageBitmap;
 
     private List<Pair> allPairs;
     private List<Pair> pizzaPairs;
     private List<Pair> cakePairs;
+
+    private String defaultImage = "unknown";
+
 
 
     @Override
@@ -170,7 +177,10 @@ public class UserListFragment extends Fragment {
                 dialog.dismiss();
                 if (person == null)
                     manager.addUser(username.getText().toString(),
-                            firstName.getText().toString(), lastName.getText().toString());
+                            firstName.getText().toString(), lastName.getText().toString()
+                            , userImageBitmap == null
+                                    ? ImageReader.imageToByte(getContext(), defaultImage)
+                                    : ImageReader.bitmapToByte(userImageBitmap));
                 else
                     manager.editUser(person, firstName.getText().toString(),
                             lastName.getText().toString(),
@@ -197,7 +207,10 @@ public class UserListFragment extends Fragment {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             userImage.setImageBitmap(imageBitmap);
+            userImageBitmap = imageBitmap;
         }
+
+
     }
 
     private void writeStatusIfAble() {
@@ -247,6 +260,7 @@ public class UserListFragment extends Fragment {
         TextView lastPair = getView().findViewById(R.id.last_event);
         lastPair.setText(allPairs.get(allPairs.size() - 1).getPerson1() +
                 " & " + allPairs.get(allPairs.size() - 1).getPerson2());
+
 
     }
 
