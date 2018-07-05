@@ -42,7 +42,7 @@
             android:id="@+id/reset_pizza"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/reset" />
+            android:text="@string/claim_pizza" />
 
     </LinearLayout>
 
@@ -84,7 +84,7 @@
             android:id="@+id/reset_cake"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/reset" />
+            android:text="@string/claim_cake" />
 
     </LinearLayout>
 

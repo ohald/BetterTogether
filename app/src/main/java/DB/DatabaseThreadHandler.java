@@ -90,6 +90,7 @@ public class DatabaseThreadHandler {
                 .observeOn(as);
     }
 
+
     public Maybe<Date> getLastReward(RewardType type) {
         return Maybe.fromCallable(()
                 -> rewDao.getLastRewardDate(type))
@@ -123,6 +124,20 @@ public class DatabaseThreadHandler {
                 -> personDao.insertPerson(person))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+
+    public Maybe<List<Reward>> getEarliestUnusedReward(RewardType type) {
+        return Maybe.fromCallable(()
+                -> rewDao.getEarliestUnusedReward(type))
+                .subscribeOn(ps)
+                .observeOn(as);
+    }
+
+    public Single<Integer> useReward(Reward reward) {
+        return Single.fromCallable(()
+                -> rewDao.updateReward(reward))
+                .subscribeOn(ps)
+                .observeOn(as);
+
     }
 
 }

@@ -116,4 +116,13 @@ public class UserListDataManager {
                         "Something went wrong while inserting to database.",
                         Toast.LENGTH_SHORT).show());
     }
+
+    @SuppressLint("CheckResult")
+    public void setUseVariableToTrue(RewardType rewardType) {
+        handler.getEarliestUnusedReward(rewardType).subscribe(rewards -> {
+            rewards.get(0).setUsedReward(true);
+            handler.useReward(rewards.get(0)).subscribe(integer ->
+            Log.d("Room", "Used reward"), error -> Log.d("Room", "failed to edit reward"));
+        });
+    }
 }

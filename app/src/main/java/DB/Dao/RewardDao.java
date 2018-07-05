@@ -6,6 +6,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import java.util.Date;
+import java.util.List;
 
 import DB.RewardType;
 import DB.Tables.Reward;
@@ -34,6 +35,9 @@ public interface RewardDao {
     //0 equals false
     @Query("SELECT COUNT(*) FROM reward_table WHERE type = :type AND usedReward = 0")
     int numberOfUnusedRewards(RewardType type);
+
+    @Query("SELECT * FROM reward_table WHERE type=:type AND usedReward=0")
+    List<Reward> getEarliestUnusedReward(RewardType type);
 
     @Update
     int updateReward(Reward reward);
