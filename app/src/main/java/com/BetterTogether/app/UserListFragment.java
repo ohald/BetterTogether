@@ -136,7 +136,7 @@ public class UserListFragment extends Fragment {
     private void add_user() {
         try {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View popUpView = inflater.inflate(R.layout.popup_layout, null);
+            View popUpView = inflater.inflate(R.layout.add_user_layout, null);
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
             alertBuilder.setView(popUpView);
             alertBuilder.setTitle("Create User");
@@ -238,6 +238,8 @@ public class UserListFragment extends Fragment {
             return;
 
         if (cakePairs.size() == cakeThreshold) {
+            RewardPopup cakeReached = new RewardPopup(this);
+            cakeReached.whistle(RewardType.CAKE);
             cakePairs = null;
             unusedCake = -1;
             pizzaPairs = null;
@@ -247,6 +249,8 @@ public class UserListFragment extends Fragment {
         }
 
         if(pizzaPairs.size() == pizzaThreshold) {
+            RewardPopup pizzaReached = new RewardPopup(this);
+            pizzaReached.whistle(RewardType.PIZZA);
             cakePairs = null;
             unusedCake = -1;
             pizzaPairs = null;

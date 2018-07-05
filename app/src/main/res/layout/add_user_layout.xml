@@ -2,7 +2,7 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
-        android:id="@+id/popup"
+        android:id="@+id/add_user_layout"
         android:layout_height="wrap_content"
         android:layout_marginBottom="110dp"
         android:orientation="vertical" >
@@ -52,28 +52,15 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add user" />
+                 />
+
             <Button
                 android:id="@+id/cancel"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cancel"/>
+
         </LinearLayout>
-    <!--
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add user"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/userInput"
-        android:layout_marginTop="100dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="This is where you create a new user" />
-
-         -->
 </LinearLayout>
