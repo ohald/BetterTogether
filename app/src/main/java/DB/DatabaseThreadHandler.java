@@ -119,25 +119,27 @@ public class DatabaseThreadHandler {
                 .observeOn(as);
     }
 
-    public Single<Long> addPerson(Person person){
+    public Single<Long> addPerson(Person person) {
         return Single.fromCallable(()
                 -> personDao.insertPerson(person))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-
-    public Maybe<List<Reward>> getEarliestUnusedReward(RewardType type) {
-        return Maybe.fromCallable(()
-                -> rewDao.getEarliestUnusedReward(type))
-                .subscribeOn(ps)
-                .observeOn(as);
     }
 
-    public Single<Integer> useReward(Reward reward) {
-        return Single.fromCallable(()
-                -> rewDao.updateReward(reward))
-                .subscribeOn(ps)
-                .observeOn(as);
+        public Maybe<List<Reward>> getEarliestUnusedReward (RewardType type){
+            return Maybe.fromCallable(()
+                    -> rewDao.getEarliestUnusedReward(type))
+                    .subscribeOn(ps)
+                    .observeOn(as);
+        }
+
+        public Single<Integer> useReward (Reward reward){
+            return Single.fromCallable(()
+                    -> rewDao.updateReward(reward))
+                    .subscribeOn(ps)
+                    .observeOn(as);
+
+        }
 
     }
 
-}
