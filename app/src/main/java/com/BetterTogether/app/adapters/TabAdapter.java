@@ -1,8 +1,11 @@
-package com.BetterTogether.app;
+package com.BetterTogether.app.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
+import com.BetterTogether.app.GraphFragment;
+import com.BetterTogether.app.UserListFragment;
 
 public class TabAdapter extends FragmentStatePagerAdapter {
 

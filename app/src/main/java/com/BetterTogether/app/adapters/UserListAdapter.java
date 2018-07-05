@@ -1,4 +1,4 @@
-package com.BetterTogether.app;
+package com.BetterTogether.app.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.BetterTogether.app.R;
 
 import java.util.List;
 
@@ -56,7 +58,8 @@ public class UserListAdapter extends BaseAdapter {
         imageView.setImageBitmap(bitmap);
 
         TextView name = rowView.findViewById(R.id.username);
-        String displayedText = dataSet.get(position).getFirstName() + " " + dataSet.get(position).getLastName();
+        String displayedText = dataSet.get(position).getFirstName() + " " +
+                dataSet.get(position).getLastName();
         name.setText(displayedText);
         return rowView;
     }
