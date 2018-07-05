@@ -277,8 +277,6 @@ public class UserListFragment extends Fragment {
         TextView lastPair = getView().findViewById(R.id.last_event);
         lastPair.setText(allPairs.get(allPairs.size() - 1).getPerson1() +
                 " & " + allPairs.get(allPairs.size() - 1).getPerson2());
-
-
     }
 
     private void resetSelectedPersons() {

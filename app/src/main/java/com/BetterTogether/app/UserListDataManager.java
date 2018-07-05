@@ -121,8 +121,11 @@ public class UserListDataManager {
     public void setUseVariableToTrue(RewardType rewardType) {
         handler.getEarliestUnusedReward(rewardType).subscribe(rewards -> {
             rewards.get(0).setUsedReward(true);
-            handler.useReward(rewards.get(0)).subscribe(integer ->
-            Log.d("Room", "Used reward"), error -> Log.d("Room", "failed to edit reward"));
+            handler.useReward(rewards.get(0)).subscribe(integer -> {
+                Log.d("Room", "Used reward");
+                getUnusedRewards();
+            }, error -> Log.d("Room", "failed to edit reward"));
+
         });
     }
 }
