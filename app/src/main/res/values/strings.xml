@@ -8,4 +8,7 @@
     <string name="cake">Cake:</string>
     <string name="claimable">Available:</string>
     <string name="last_ppm_event">Most recent:</string>
+    <string name="claim_pizza">Claim pizza</string>
+    <string name="claim_cake">Claim cake</string>
+    <string name="yes">yes</string>
 </resources>

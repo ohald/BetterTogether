@@ -94,6 +94,23 @@ public class UserListFragment extends Fragment {
         Button cancelBtn = getView().findViewById(R.id.reset_selection_button);
         cancelBtn.setOnClickListener(view12 -> resetSelectedPersons());
 
+        Button claim_cake = (Button) getView().findViewById(R.id.reset_cake);
+        claim_cake.setOnClickListener(btn -> {if (getUnusedCake() != 0){
+            new RewardPopup(this).claimReward(RewardType.CAKE);}
+        else{
+            Toast.makeText(getContext(), "You don't have any cake to claim",
+                    Toast.LENGTH_SHORT).show();
+        }});
+
+        Button claim_pizza = (Button) getView().findViewById(R.id.reset_pizza);
+        claim_pizza.setOnClickListener(btn -> {if (getUnusedPizza() != 0){
+            new RewardPopup(this).claimReward(RewardType.PIZZA);}
+                else{
+                    Toast.makeText(getContext(), "You don't have any pizza to claim",
+                    Toast.LENGTH_SHORT).show();
+        }});
+
+
         selectedItems = new ArrayList<>();
 
         manager.getActiveUsers();
@@ -260,8 +277,6 @@ public class UserListFragment extends Fragment {
         TextView lastPair = getView().findViewById(R.id.last_event);
         lastPair.setText(allPairs.get(allPairs.size() - 1).getPerson1() +
                 " & " + allPairs.get(allPairs.size() - 1).getPerson2());
-
-
     }
 
     private void resetSelectedPersons() {
@@ -303,5 +318,17 @@ public class UserListFragment extends Fragment {
     public void setUnusedPizza(int unusedPizza) {
         this.unusedPizza = unusedPizza;
         writeStatusIfAble();
+    }
+
+    public UserListDataManager getManager() {
+        return manager;
+    }
+
+    public int getUnusedCake() {
+        return unusedCake;
+    }
+
+    public int getUnusedPizza() {
+        return unusedPizza;
     }
 }
