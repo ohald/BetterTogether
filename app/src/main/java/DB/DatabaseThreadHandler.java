@@ -43,16 +43,16 @@ public class DatabaseThreadHandler {
                 .observeOn(as);
     }
 
-    public Maybe<List<Person>> allActivePersons(){
+    public Maybe<List<Person>> allActivePersons() {
         return Maybe.fromCallable(()
                 -> personDao.getAllActivePersons())
                 .subscribeOn(ps)
                 .observeOn(as);
     }
 
-    public Single<Integer> udpatePerson(Person person){
+    public Single<Integer> udpatePerson(Person person) {
         return Single.fromCallable(()
-        -> personDao.updatePerson(person)).subscribeOn(ps).observeOn(as);
+                -> personDao.updatePerson(person)).subscribeOn(ps).observeOn(as);
     }
 
     public Single<Long> addPair(Pair pair) {
@@ -126,20 +126,25 @@ public class DatabaseThreadHandler {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-        public Maybe<List<Reward>> getEarliestUnusedReward (RewardType type){
-            return Maybe.fromCallable(()
-                    -> rewDao.getEarliestUnusedReward(type))
-                    .subscribeOn(ps)
-                    .observeOn(as);
-        }
 
-        public Single<Integer> useReward (Reward reward){
-            return Single.fromCallable(()
-                    -> rewDao.updateReward(reward))
-                    .subscribeOn(ps)
-                    .observeOn(as);
+    public Maybe<List<Reward>> getEarliestUnusedReward(RewardType type) {
+        return Maybe.fromCallable(()
+                -> rewDao.getEarliestUnusedReward(type))
+                .subscribeOn(ps)
+                .observeOn(as);
+    }
 
-        }
+    public Single<Integer> useReward(Reward reward) {
+        return Single.fromCallable(()
+                -> rewDao.updateReward(reward))
+                .subscribeOn(ps)
+                .observeOn(as);
 
     }
+
+
+    public void refreshDB(Context context) {
+        db.refreshDB(context);
+    }
+}
 

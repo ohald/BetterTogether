@@ -1,9 +1,9 @@
 package com.BetterTogether.app;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -82,8 +82,8 @@ public class UserListDataManager {
     @SuppressLint("CheckResult")
     void addUser(String userName, String firstName, String lastName, byte[] img) {
         Person newUser = new Person(userName, firstName, lastName, img, true);
-        if (users.contains(newUser)){
-            Toast.makeText(userListFragment.getContext(), "User already exists", Toast.LENGTH_SHORT).show();
+        if (users.contains(newUser)) {
+            Toast.makeText(userListFragment.getContext(), "User already exists: " + userName, Toast.LENGTH_SHORT).show();
             return;
         }
         handler.addPerson(newUser).subscribe(num -> {
@@ -117,6 +117,7 @@ public class UserListDataManager {
                         Toast.LENGTH_SHORT).show());
     }
 
+
     @SuppressLint("CheckResult")
     public void setUseVariableToTrue(RewardType rewardType) {
         handler.getEarliestUnusedReward(rewardType).subscribe(rewards -> {
@@ -128,4 +129,9 @@ public class UserListDataManager {
 
         });
     }
+
+    public void refreshDB(Context context) {
+        handler.refreshDB(context);
+    }
 }
+

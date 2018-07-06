@@ -20,9 +20,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.BetterTogether.app.adapters.UserListAdapter;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,8 +32,6 @@ import DB.Tables.Person;
 import JSONReader.ImageReader;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-
-
 
 import static android.app.Activity.RESULT_OK;
 
@@ -113,10 +109,14 @@ public class UserListFragment extends Fragment {
 
         selectedItems = new ArrayList<>();
 
+        //add initial data to database
+        manager.refreshDB(getContext());
+        //get data from database
         manager.getActiveUsers();
         manager.getPairs();
         manager.getThresholds();
         manager.getUnusedRewards();
+
     }
 
     private void selectItemAtPosition(int position) {
@@ -226,8 +226,6 @@ public class UserListFragment extends Fragment {
             userImage.setImageBitmap(imageBitmap);
             userImageBitmap = imageBitmap;
         }
-
-
     }
 
     private void writeStatusIfAble() {

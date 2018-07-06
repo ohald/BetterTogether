@@ -8,11 +8,14 @@ import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 import DB.Dao.PairDao;
 import DB.Dao.PersonDao;
@@ -21,7 +24,6 @@ import DB.Tables.Pair;
 import DB.Tables.Person;
 import DB.Tables.Reward;
 import DB.Tables.Threshold;
-import JSONReader.ImageReader;
 import JSONReader.JSONReader;
 
 @Database(entities = {Person.class, Pair.class, Reward.class, Threshold.class}, version = 2, exportSchema = false)
@@ -38,8 +40,8 @@ public abstract class SQLiteDB extends RoomDatabase {
 
     public static SQLiteDB getInstance(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = Room.databaseBuilder
-                    (context.getApplicationContext()
+            INSTANCE = Room.databaseBuilder(
+                    context.getApplicationContext()
                             , SQLiteDB.class
                             , "PairProgrammingDB")
                     .addMigrations(MIGRATION_2_3)
@@ -54,21 +56,10 @@ public abstract class SQLiteDB extends RoomDatabase {
                         }
                         @Override
                         public void onOpen(@NonNull SupportSQLiteDatabase db) {
-                            Executors.newSingleThreadExecutor().execute(() -> {
-                                List<Person> curPersons = getInstance(context).personDao().getAllPersons();
-                                Person[] newPersonsArray = JSONReader.parsePersonsFromJson(context);
 
-                                if(newPersonsArray == null)
-                                    return;
-
-                                List<Person> newPersons = Arrays.asList(newPersonsArray);
-                                if (curPersons.equals(newPersons))
-                                    return;
-                                updatePersonsInDatabase(curPersons, newPersons, context);
-                            });
                         }
                     })
-                    .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
                     .build();
         }
         return INSTANCE;
@@ -100,6 +91,19 @@ public abstract class SQLiteDB extends RoomDatabase {
                 getInstance(context).personDao().insertPerson(p);
             }
         }
+    }
+
+    public void refreshDB(Context context) {
+            List<Person> curPersons = personDao().getAllPersons();
+            Person[] newPersonsArray = JSONReader.parsePersonsFromJson(context);
+
+            if(newPersonsArray == null)
+                return;
+
+            List<Person> newPersons = Arrays.asList(newPersonsArray);
+            if (curPersons.equals(newPersons))
+                return;
+            updatePersonsInDatabase(curPersons, newPersons, context);
     }
 
     //Not useful when database cannot write to resources.
