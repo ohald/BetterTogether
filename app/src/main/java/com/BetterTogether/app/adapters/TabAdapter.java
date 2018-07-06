@@ -9,11 +9,10 @@ import com.BetterTogether.app.UserListFragment;
 
 public class TabAdapter extends FragmentStatePagerAdapter {
 
-    private UserListFragment userListFragment;
-    private GraphFragment graphFragment;
-
     private static final int NUM_TABS = 2;
     private static final String[] TAB_TITLES = {"User list", "Graph"};
+    private UserListFragment userListFragment;
+    private GraphFragment graphFragment;
 
     public TabAdapter(FragmentManager fm, UserListFragment userListFragment, GraphFragment graphFragment) {
         super(fm);

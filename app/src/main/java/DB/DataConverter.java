@@ -22,21 +22,24 @@ public class DataConverter {
     }
 
     @TypeConverter
-    public String fromRewardType(RewardType rewardType){
+    public String fromRewardType(RewardType rewardType) {
         if (rewardType == null)
             return null;
         return rewardType.toString();
     }
 
     @TypeConverter
-    public RewardType toRewardType(String value){
+    public RewardType toRewardType(String value) {
         if (value == null)
             return null;
-        switch (value){
-            case "cake" : return RewardType.CAKE;
-            case "pizza" : return RewardType.PIZZA;
+        switch (value) {
+            case "cake":
+                return RewardType.CAKE;
+            case "pizza":
+                return RewardType.PIZZA;
             //maybe not use this as default??
-            default: return null;
+            default:
+                return null;
         }
     }
 

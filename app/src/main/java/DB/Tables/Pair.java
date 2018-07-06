@@ -7,19 +7,19 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+
 import java.util.Date;
 
 import DB.DataConverter;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
-import static android.arch.persistence.room.ForeignKey.NO_ACTION;
 
 @Entity(tableName = "pair_table", foreignKeys = {
         @ForeignKey(entity = Person.class, parentColumns = "username", childColumns = "person1", onUpdate = CASCADE),
         @ForeignKey(entity = Person.class, parentColumns = "username", childColumns = "person2", onUpdate = CASCADE),
 
-},  indices = {@Index("person1"),
-               @Index("person2")}
+}, indices = {@Index("person1"),
+        @Index("person2")}
 )
 public class Pair {
 
@@ -30,7 +30,7 @@ public class Pair {
     @TypeConverters(DataConverter.class)
     private Date date;
 
-    public Pair (Date date){
+    public Pair(Date date) {
         this.date = date;
     }
 

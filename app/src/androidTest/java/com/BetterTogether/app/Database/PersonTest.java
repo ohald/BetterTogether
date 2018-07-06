@@ -10,9 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
-import java.io.IOException;
-
 import DB.Dao.PersonDao;
 import DB.SQLiteDB;
 import DB.Tables.Person;
@@ -39,11 +36,11 @@ public class PersonTest {
     }
 
     @After
-    public void closeDb(){
+    public void closeDb() {
         mDb.close();
     }
 
-    public void addPersonToDB(){
+    public void addPersonToDB() {
         person.setFirstName("Eirin");
         person.setLastName("S");
         mPersonDao.insertPerson(person);
@@ -63,47 +60,47 @@ public class PersonTest {
 
 
     @Test
-    public void cannotInsertTwoPersonsWithSameUsername(){
+    public void cannotInsertTwoPersonsWithSameUsername() {
         addPersonToDB();
 
         Person person2 = new Person("esog");
         try {
             mPersonDao.insertPerson(person2);
             fail("Should get exception when adding two people with same username.");
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
 
     @Test
-    public void cannotInsertTwoPersonsWithSameUsernameButDifferentUpperAndLowerCase(){
+    public void cannotInsertTwoPersonsWithSameUsernameButDifferentUpperAndLowerCase() {
         addPersonToDB();
 
         Person person2 = new Person("ESOG");
         try {
             mPersonDao.insertPerson(person2);
             fail("Should get exception when adding two people with same username.");
-        } catch (Exception e){
+        } catch (Exception e) {
             //test passed. Should not be able to insert two people with same username.
         }
     }
 
     @Test
-    public void insertPersonIsTheSamePersonWhenFoundBySearch(){
-       mPersonDao.insertPerson(person);
-       Person personInDB = mPersonDao.getPerson(person.getUsername());
-       assertThat(person.getUsername(), equalTo(personInDB.getUsername()));
+    public void insertPersonIsTheSamePersonWhenFoundBySearch() {
+        mPersonDao.insertPerson(person);
+        Person personInDB = mPersonDao.getPerson(person.getUsername());
+        assertThat(person.getUsername(), equalTo(personInDB.getUsername()));
     }
 
     @Test
-    public void addingPersonYieldsOnePersonInDB(){
+    public void addingPersonYieldsOnePersonInDB() {
         addPersonToDB();
 
         assertThat(1, equalTo(mPersonDao.getNumberOfUsers()));
     }
 
     @Test
-    public void deletePersonFromDBWithOnlyOnePersonGivesEmptyDB(){
+    public void deletePersonFromDBWithOnlyOnePersonGivesEmptyDB() {
         addPersonToDB();
 
         mPersonDao.deletePerson(person);
@@ -111,7 +108,7 @@ public class PersonTest {
     }
 
     @Test
-    public void getsNullWhenTryingToGetDeletedPersonFromDB(){
+    public void getsNullWhenTryingToGetDeletedPersonFromDB() {
         addPersonToDB();
 
         mPersonDao.deletePerson(person);

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -60,7 +59,6 @@ public class UserListFragment extends Fragment {
     private String defaultImage = "unknown";
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,20 +89,24 @@ public class UserListFragment extends Fragment {
         cancelBtn.setOnClickListener(view12 -> resetSelectedPersons());
 
         Button claim_cake = (Button) getView().findViewById(R.id.reset_cake);
-        claim_cake.setOnClickListener(btn -> {if (getUnusedCake() != 0){
-            new RewardPopup(this).claimReward(RewardType.CAKE);}
-        else{
-            Toast.makeText(getContext(), "You don't have any cake to claim",
-                    Toast.LENGTH_SHORT).show();
-        }});
+        claim_cake.setOnClickListener(btn -> {
+            if (getUnusedCake() != 0) {
+                new RewardPopup(this).claimReward(RewardType.CAKE);
+            } else {
+                Toast.makeText(getContext(), "You don't have any cake to claim",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         Button claim_pizza = (Button) getView().findViewById(R.id.reset_pizza);
-        claim_pizza.setOnClickListener(btn -> {if (getUnusedPizza() != 0){
-            new RewardPopup(this).claimReward(RewardType.PIZZA);}
-                else{
-                    Toast.makeText(getContext(), "You don't have any pizza to claim",
-                    Toast.LENGTH_SHORT).show();
-        }});
+        claim_pizza.setOnClickListener(btn -> {
+            if (getUnusedPizza() != 0) {
+                new RewardPopup(this).claimReward(RewardType.PIZZA);
+            } else {
+                Toast.makeText(getContext(), "You don't have any pizza to claim",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         selectedItems = new ArrayList<>();
@@ -242,7 +244,7 @@ public class UserListFragment extends Fragment {
             return;
         }
 
-        if(pizzaPairs.size() == pizzaThreshold) {
+        if (pizzaPairs.size() == pizzaThreshold) {
             RewardPopup pizzaReached = new RewardPopup(this);
             pizzaReached.whistle(RewardType.PIZZA);
             cakePairs = null;
@@ -308,16 +310,6 @@ public class UserListFragment extends Fragment {
         writeStatusIfAble();
     }
 
-    public void setUnusedCake(int unusedCake) {
-        this.unusedCake = unusedCake;
-        writeStatusIfAble();
-    }
-
-    public void setUnusedPizza(int unusedPizza) {
-        this.unusedPizza = unusedPizza;
-        writeStatusIfAble();
-    }
-
     public UserListDataManager getManager() {
         return manager;
     }
@@ -326,7 +318,17 @@ public class UserListFragment extends Fragment {
         return unusedCake;
     }
 
+    public void setUnusedCake(int unusedCake) {
+        this.unusedCake = unusedCake;
+        writeStatusIfAble();
+    }
+
     public int getUnusedPizza() {
         return unusedPizza;
+    }
+
+    public void setUnusedPizza(int unusedPizza) {
+        this.unusedPizza = unusedPizza;
+        writeStatusIfAble();
     }
 }

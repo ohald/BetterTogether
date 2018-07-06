@@ -8,8 +8,6 @@ import android.support.annotation.NonNull;
 
 import java.util.Objects;
 
-import JSONReader.ImageReader;
-
 
 @Entity(tableName = "people_table")
 public class Person {
@@ -51,37 +49,36 @@ public class Person {
     }
 
     public void setActive(boolean active) {
-        active = active;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+        this.active = active;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
-
     public String getFirstName() {
 
         return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     public byte[] getImage() {
         return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     @Override

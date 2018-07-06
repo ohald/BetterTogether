@@ -8,7 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -19,10 +18,7 @@ import DB.Tables.Pair;
 import DB.Tables.Person;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class PairTest {
 
@@ -30,7 +26,7 @@ public class PairTest {
     private PersonDao mPersonDao;
     private SQLiteDB mDb;
     private Pair pair;
-    private GregorianCalendar calendar = new GregorianCalendar(1900, 01,1,00,00,00);
+    private GregorianCalendar calendar = new GregorianCalendar(1900, 01, 1, 00, 00, 00);
     private Date date = new Date(calendar.getTimeInMillis());
 
     private Date testDate = new Date();
@@ -44,11 +40,11 @@ public class PairTest {
     }
 
     @After
-    public void closeDb(){
+    public void closeDb() {
         mDb.close();
     }
 
-    private void addPairToDB(){
+    private void addPairToDB() {
         Person esog = new Person("esog");
         Person ohald = new Person("ohald");
         mPersonDao.insertPerson(esog);
@@ -61,7 +57,7 @@ public class PairTest {
     }
 
     @Test
-    public void updatingSecondPersonInPairChangesSecondPersonInPair(){
+    public void updatingSecondPersonInPairChangesSecondPersonInPair() {
         addPairToDB();
         mPersonDao.insertPerson(new Person("other"));
         this.pair.setPerson2("other");
@@ -73,19 +69,19 @@ public class PairTest {
 
 
     @Test
-    public void addPairToEmptyDBGivesOnePairInDB(){
+    public void addPairToEmptyDBGivesOnePairInDB() {
         addPairToDB();
         assertThat(1, equalTo(mPairDao.getHistory(date).size()));
     }
 
     @Test
-    public void deletePairFromDBRemovesPairFromDB(){
+    public void deletePairFromDBRemovesPairFromDB() {
         addPairToDB();
         mPairDao.deletePair(pair);
 
-       assertThat(mPairDao.getTimesPairProgrammed("ohald"), equalTo(0));
-       assertThat(mPairDao.getTimesPairProgrammed("esog"), equalTo(0));
-       assertThat(mPairDao.getPairProgrammingTotalFromDate(date), equalTo(0));
+        assertThat(mPairDao.getTimesPairProgrammed("ohald"), equalTo(0));
+        assertThat(mPairDao.getTimesPairProgrammed("esog"), equalTo(0));
+        assertThat(mPairDao.getPairProgrammingTotalFromDate(date), equalTo(0));
     }
 
 

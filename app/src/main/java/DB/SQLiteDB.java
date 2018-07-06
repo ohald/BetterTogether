@@ -8,14 +8,10 @@ import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 
 import DB.Dao.PairDao;
 import DB.Dao.PersonDao;
@@ -30,13 +26,13 @@ import JSONReader.JSONReader;
 @TypeConverters({DataConverter.class})
 public abstract class SQLiteDB extends RoomDatabase {
 
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+
+        }
+    };
     private static SQLiteDB INSTANCE;
-
-    public abstract PersonDao personDao();
-
-    public abstract RewardDao rewardDao();
-
-    public abstract PairDao pairDao();
 
     public static SQLiteDB getInstance(Context context) {
         if (INSTANCE == null) {
@@ -47,45 +43,32 @@ public abstract class SQLiteDB extends RoomDatabase {
                     .addMigrations(MIGRATION_2_3)
                     .addCallback(new Callback() {
                         @Override
-                        public void onCreate(@NonNull SupportSQLiteDatabase db){
+                        public void onCreate(@NonNull SupportSQLiteDatabase db) {
                             Executors.newSingleThreadExecutor().execute(() -> {
                                 getInstance(context).rewardDao().addThresholds(JSONReader.parseThresholdsFromJSON(context));
                                 getInstance(context).rewardDao().addReward(JSONReader.parseRewardFromJSON(context));
-                                //getInstance(context).personDao().insertAll(JSONReader.parsePersonsFromJson(context));
                             });
-                        }
-                        @Override
-                        public void onOpen(@NonNull SupportSQLiteDatabase db) {
-
-                        }
-                    })
+                        }})
                     .allowMainThreadQueries()
                     .build();
         }
         return INSTANCE;
     }
 
-    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-
-        }
-    };
-
-
     /**
      * This method only allows you to add or remove persons from database, using the file
      * users.json. It does NOT make changes to images or other fields.
+     *
      * @param curPersons
      * @param newPersons
      * @param context
      */
-    private static void updatePersonsInDatabase(List<Person> curPersons, List<Person> newPersons, Context context){
+    private static void updatePersonsInDatabase(List<Person> curPersons, List<Person> newPersons, Context context) {
         addNewEntriesToDatabase(curPersons, newPersons, context);
         //setDeletedPersonEntriesToAnonymous(curPersons, newPersons, context);
     }
 
-    private static void addNewEntriesToDatabase(List<Person> curPersons, List<Person> newPersons, Context context){
+    private static void addNewEntriesToDatabase(List<Person> curPersons, List<Person> newPersons, Context context) {
         for (Person p : newPersons) {
             if (!curPersons.contains(p)) {
                 getInstance(context).personDao().insertPerson(p);
@@ -105,6 +88,12 @@ public abstract class SQLiteDB extends RoomDatabase {
                 return;
             updatePersonsInDatabase(curPersons, newPersons, context);
     }
+
+    public abstract PersonDao personDao();
+
+    public abstract RewardDao rewardDao();
+
+    public abstract PairDao pairDao();
 
     //Not useful when database cannot write to resources.
     /*

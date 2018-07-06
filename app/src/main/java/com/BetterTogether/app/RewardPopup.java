@@ -1,15 +1,10 @@
 package com.BetterTogether.app;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.media.MediaPlayer;
-import android.support.design.widget.FloatingActionButton;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import DB.RewardType;
@@ -36,7 +31,7 @@ public class RewardPopup {
         //MediaPlayer cakeSound = MediaPlayer.create(RewardPopup.this, R.raw.cake_sound);
         //cakeSound.start();
 
-        if (rewardType == RewardType.CAKE){
+        if (rewardType == RewardType.CAKE) {
             alertBuilder.setTitle("IT IS CAKE TIME!!");
             popup.setBackgroundResource(R.drawable.cake_picture);
 
@@ -54,16 +49,16 @@ public class RewardPopup {
 
     }
 
-    public void claimReward(RewardType rewardType){
+    public void claimReward(RewardType rewardType) {
         View claim_popup = layoutInflater.inflate(R.layout.claim_reward_layout, null);
         alertBuilder.setView(claim_popup);
 
-        alertBuilder.setMessage("Do you want to claim a "+rewardType.toString()+" event?");
+        alertBuilder.setMessage("Do you want to claim a " + rewardType.toString() + " event?");
 
         alertBuilder.setPositiveButton(R.string.yes, (dialog, id) -> {
             rewardStatus.getManager().setUseVariableToTrue(rewardType);
-            Toast confirmMsg = Toast.makeText(rewardStatus.getContext(), "You have claimed "+rewardType.toString(), Toast.LENGTH_SHORT);
-            confirmMsg.setGravity(Gravity.TOP | Gravity.LEFT,0,0);
+            Toast confirmMsg = Toast.makeText(rewardStatus.getContext(), "You have claimed " + rewardType.toString(), Toast.LENGTH_SHORT);
+            confirmMsg.setGravity(Gravity.TOP | Gravity.LEFT, 0, 0);
             confirmMsg.show();
             dialog.dismiss();
         });

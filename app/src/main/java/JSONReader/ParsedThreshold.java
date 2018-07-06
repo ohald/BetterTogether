@@ -1,14 +1,15 @@
 package JSONReader;
 
 
-import java.util.HashMap;
-import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import DB.RewardType;
 
@@ -35,10 +36,15 @@ public class ParsedThreshold {
 
     @JsonProperty("rewardtype")
     public void setRewardtype(String rewardtype) {
-        switch (rewardtype){
-            case "cake": this.rewardtype = RewardType.CAKE; break;
-            case "pizza": this.rewardtype = RewardType.PIZZA; break;
-            default: this.rewardtype = null;
+        switch (rewardtype) {
+            case "cake":
+                this.rewardtype = RewardType.CAKE;
+                break;
+            case "pizza":
+                this.rewardtype = RewardType.PIZZA;
+                break;
+            default:
+                this.rewardtype = null;
         }
     }
 

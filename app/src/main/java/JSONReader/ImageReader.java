@@ -14,12 +14,12 @@ public class ImageReader {
 
     public static Bitmap imageToBitmap(Context c, String imgname) {
         AssetManager assetManager = c.getAssets();
-       try {
+        try {
             InputStream istr = assetManager.open("images/" + imgname + ".png");
             Bitmap map = BitmapFactory.decodeStream(istr);
             istr.close();
             return map;
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -38,7 +38,7 @@ public class ImageReader {
         }
     }
 
-    public static byte[] imageToByte(Context c, String imgname){
+    public static byte[] imageToByte(Context c, String imgname) {
         return bitmapToByte(imageToBitmap(c, imgname));
     }
 

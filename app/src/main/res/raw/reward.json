@@ -1,4 +1,12 @@
 [
-  {"date":"default", "rewardtype":"cake", "usedreward":"true"}
- ,{"date":"default", "rewardtype":"pizza", "usedreward":"true"}
+  {
+    "date": "default",
+    "rewardtype": "cake",
+    "usedreward": "true"
+  },
+  {
+    "date": "default",
+    "rewardtype": "pizza",
+    "usedreward": "true"
+  }
 ]

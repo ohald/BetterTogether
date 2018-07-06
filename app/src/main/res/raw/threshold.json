@@ -1,4 +1,10 @@
 [
-  {"rewardtype": "cake", "threshold": 5}
-, {"rewardtype": "pizza", "threshold": 11}
+  {
+    "rewardtype": "cake",
+    "threshold": 5
+  },
+  {
+    "rewardtype": "pizza",
+    "threshold": 11
+  }
 ]

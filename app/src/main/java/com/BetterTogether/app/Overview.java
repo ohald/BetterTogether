@@ -25,12 +25,12 @@ public class Overview extends AppCompatActivity {
        /* if (!(ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)){
             ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     MY_PERMISSIONS_READ_EXTERNAL);
         }*/
 
-            TabAdapter tabAdapter = new TabAdapter
-                    (getSupportFragmentManager(), new UserListFragment(), new GraphFragment());
+        TabAdapter tabAdapter = new TabAdapter
+                (getSupportFragmentManager(), new UserListFragment(), new GraphFragment());
 
         ViewPager viewPager = findViewById(R.id.pager);
         viewPager.setAdapter(tabAdapter);

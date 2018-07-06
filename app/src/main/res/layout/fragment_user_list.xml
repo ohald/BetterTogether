@@ -56,9 +56,9 @@
 
         <TextView
             android:layout_width="130dp"
-            android:textSize="15sp"
             android:layout_height="wrap_content"
-            android:text="@string/cake"/>
+            android:text="@string/cake"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/cake_text"
@@ -93,34 +93,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/cake_progress"
-        android:gravity="center_horizontal"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:gravity="center_horizontal">
 
         <TextView
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="@string/ppm_num" />
+            android:text="@string/ppm_num"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/num_of_pairs"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <TextView
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="@string/last_ppm_event" />
+            android:text="@string/last_ppm_event"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/last_event"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
     </LinearLayout>
 

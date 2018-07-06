@@ -6,6 +6,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
+
 import DB.RewardType;
 
 @Entity(tableName = "reward_table")
@@ -19,21 +20,17 @@ public class Reward {
 
     private boolean usedReward;
 
-    public Reward(Date date, @NonNull RewardType type){
+    public Reward(Date date, @NonNull RewardType type) {
         this.date = date;
         this.type = type;
         this.usedReward = false;
     }
 
     @Ignore
-    public Reward(Date date, @NonNull RewardType type, boolean usedReward){
+    public Reward(Date date, @NonNull RewardType type, boolean usedReward) {
         this.date = date;
         this.type = type;
         this.usedReward = usedReward;
-    }
-
-    public void setType(@NonNull RewardType type) {
-        this.type = type;
     }
 
     public boolean isUsedReward() {
@@ -54,6 +51,10 @@ public class Reward {
 
     public RewardType getType() {
         return type;
+    }
+
+    public void setType(@NonNull RewardType type) {
+        this.type = type;
     }
 
 }

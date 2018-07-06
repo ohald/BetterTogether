@@ -1,14 +1,14 @@
 package JSONReader;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -78,16 +78,15 @@ public class ParsedPerson {
     }
 
     @JsonProperty("active")
-    public void setActive(String active){
-        this.active = active;
+    public boolean getActive() {
+        if (active == null) return true;
+        return active.equals("false") ? false : true;
     }
 
     @JsonProperty("active")
-    public boolean getActive(){
-        if(active == null) return true;
-       return active.equals("false") ? false : true;
+    public void setActive(String active) {
+        this.active = active;
     }
-
 
     @JsonProperty("image")
     public String getImage() {
