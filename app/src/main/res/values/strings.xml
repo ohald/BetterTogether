@@ -11,4 +11,7 @@
     <string name="claim_pizza">Claim pizza</string>
     <string name="claim_cake">Claim cake</string>
     <string name="yes">yes</string>
+    <string name="add_user">Add user</string>
+    <string name="add_pair">Add pair</string>
+    <string name="reset_selection">Reset selection</string>
 </resources>
