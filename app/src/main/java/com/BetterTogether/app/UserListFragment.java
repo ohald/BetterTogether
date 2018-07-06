@@ -19,7 +19,9 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.BetterTogether.app.adapters.UserListAdapter;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -183,6 +185,7 @@ public class UserListFragment extends Fragment {
                 builder.setTitle("Edit user");
                 add.setText("Done");
                 staticUsername.setText(person.getUsername());
+                username.setText(person.getUsername());
                 firstName.setText(person.getFirstName());
                 lastName.setText(person.getLastName());
                 userImage.setImageBitmap(ImageReader.byteArrayToBitmap(person.getImage()));
@@ -193,17 +196,26 @@ public class UserListFragment extends Fragment {
 
             image.setOnClickListener(btn -> openCameraActivity());
             add.setOnClickListener(btn -> {
+                if (username.getText().toString().isEmpty() ||
+                        firstName.getText().toString().isEmpty() ||
+                        lastName.getText().toString().isEmpty()) {
+                    Toast.makeText(getContext(), "Username, first name and last name must be filled out!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 dialog.dismiss();
-                if (person == null)
+                if (person == null) {
                     manager.addUser(username.getText().toString(),
                             firstName.getText().toString(), lastName.getText().toString()
                             , userImageBitmap == null
                                     ? ImageReader.imageToByte(getContext(), defaultImage)
                                     : ImageReader.bitmapToByte(userImageBitmap));
-                else
+                } else
                     manager.editUser(person, firstName.getText().toString(),
                             lastName.getText().toString(),
                             ((BitmapDrawable) userImage.getDrawable()).getBitmap());
+                //reset camera image
+                userImage = null;
+                userImageBitmap = null;
             });
             cancel.setOnClickListener(btn -> dialog.dismiss());
             return true;

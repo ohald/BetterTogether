@@ -130,10 +130,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/total_ppm"
+        android:layout_above="@+id/pair_buttons"
         android:horizontalSpacing="10dp"
         android:numColumns="2"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="10dp" />
+        android:verticalSpacing="10dp"
+        android:scrollbars="vertical"/>
 
     <LinearLayout
         android:id="@+id/pair_buttons"
@@ -148,19 +150,19 @@
             android:id="@+id/create_pair_button"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/ok" />
+            android:text="@string/add_pair" />
 
         <Button
             android:id="@+id/reset_selection_button"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/cancel" />
+            android:text="@string/reset_selection" />
 
         <Button
             android:id="@+id/add_user"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Add user" />
+            android:text="@string/add_user" />
 
     </LinearLayout>
 
