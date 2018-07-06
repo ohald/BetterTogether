@@ -99,8 +99,10 @@ public class UserListDataManager {
         person.setFirstName(firstName);
         person.setLastName(lastName);
         person.setImage(ImageReader.bitmapToByte(image));
-        handler.udpatePerson(person).subscribe(integer ->
-                Log.d("Room", "User edited"), error -> error.printStackTrace());
+        handler.udpatePerson(person).subscribe(integer -> {
+            Log.d("Room", "User edited");
+            getActiveUsers();
+        }, error -> error.printStackTrace());
     }
 
     @SuppressLint("CheckResult")

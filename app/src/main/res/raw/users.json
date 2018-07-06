@@ -1,5 +1,20 @@
 [
-  {"username" : "esog", "firstname" : "Eirin", "lastname":"Sognnes", "image":"esog"}
-, {"username" : "ohald", "firstname" : "Øyvor", "lastname":"Haldorsen", "image":"ohald"}
-, {"username" : "mleik", "firstname" : "Magnus", "lastname":"Leikvoll", "image":"magnleik"}
+  {
+    "username": "esog",
+    "firstname": "Eirin",
+    "lastname": "Sognnes",
+    "image": "esog"
+  },
+  {
+    "username": "ohald",
+    "firstname": "Øyvor",
+    "lastname": "Haldorsen",
+    "image": "ohald"
+  },
+  {
+    "username": "mleik",
+    "firstname": "Magnus",
+    "lastname": "Leikvoll",
+    "image": "magnleik"
+  }
 ]

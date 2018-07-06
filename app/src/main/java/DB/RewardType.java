@@ -6,9 +6,9 @@ public enum RewardType {
 
 
     @Override
-    public String toString(){
-       return super.toString().toLowerCase();
-       }
+    public String toString() {
+        return super.toString().toLowerCase();
+    }
 
 
 }

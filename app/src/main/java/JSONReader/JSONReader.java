@@ -8,14 +8,13 @@ import com.BetterTogether.app.R;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import DB.Tables.Person;
-import DB.Tables.Reward;
-import DB.Tables.Threshold;
-
-
 import java.io.InputStream;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import DB.Tables.Person;
+import DB.Tables.Reward;
+import DB.Tables.Threshold;
 
 
 public class JSONReader {
@@ -126,7 +125,6 @@ public class JSONReader {
         Bitmap bitmap = reader.imageToBitmap(context, imgname);
         return reader.bitmapToByte(bitmap);
     }
-
 
 
     //INTERNAL STORAGE CODE, USELESS??
