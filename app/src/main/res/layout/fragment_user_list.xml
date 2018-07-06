@@ -133,7 +133,8 @@
         android:horizontalSpacing="10dp"
         android:numColumns="2"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="10dp" />
+        android:verticalSpacing="10dp"
+        android:scrollbars="vertical"/>
 
     <LinearLayout
         android:id="@+id/pair_buttons"
