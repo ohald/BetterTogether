@@ -2,7 +2,6 @@ package com.BetterTogether.app;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,9 +15,8 @@ import DB.RewardType;
 import DB.Tables.Pair;
 import DB.Tables.Person;
 import DB.Tables.Reward;
-import JSONReader.ImageReader;
 
-public class UserListDataManager extends Observable {
+public class DataManager extends Observable {
 
     private DatabaseThreadHandler handler;
     private List<Person> allUsers;
@@ -34,7 +32,9 @@ public class UserListDataManager extends Observable {
     private int unusedCake;
     private int unusedPizza;
 
-    UserListDataManager(DatabaseThreadHandler handler) {
+    private boolean isAddingReward;
+
+    DataManager(DatabaseThreadHandler handler) {
         this.handler = handler;
         cakeThreshold = 10000;
         pizzaThreshold = 10000;
@@ -65,15 +65,15 @@ public class UserListDataManager extends Observable {
                 });
 
         handler.getPairsSinceLastReward(RewardType.PIZZA).subscribe(pairs -> {
-                this.pizzaPairs = pairs;
-                setChanged();
-                notifyObservers();
-    });
+            this.pizzaPairs = pairs;
+            setChanged();
+            notifyObservers();
+        });
 
         handler.getPairsSinceLastReward(RewardType.CAKE).subscribe(pairs -> {
-                this.cakePairs = pairs;
-                setChanged();
-                notifyObservers();
+            this.cakePairs = pairs;
+            setChanged();
+            notifyObservers();
         });
 
     }
@@ -89,11 +89,17 @@ public class UserListDataManager extends Observable {
 
     @SuppressLint("CheckResult")
     void updateUnusedRewards() {
-        handler.getUnusedRewardsCount(RewardType.CAKE).subscribe(count ->
-                this.unusedCake = count);
+        handler.getUnusedRewardsCount(RewardType.CAKE).subscribe(count -> {
+            this.unusedCake = count;
+            setChanged();
+            notifyObservers();
+        });
 
-        handler.getUnusedRewardsCount(RewardType.PIZZA).subscribe(count ->
-                this.unusedPizza = count);
+        handler.getUnusedRewardsCount(RewardType.PIZZA).subscribe(count -> {
+            this.unusedPizza = count;
+            setChanged();
+            notifyObservers();
+        });
     }
 
     @SuppressLint("CheckResult")
@@ -112,6 +118,8 @@ public class UserListDataManager extends Observable {
         handler.allPersons().subscribe(
                 persons -> {
                     allUsers = persons;
+                    setChanged();
+                    notifyObservers();
                 });
     }
 
@@ -120,6 +128,8 @@ public class UserListDataManager extends Observable {
         handler.addNewReward(new Reward(new Date(), type)).subscribe(longs -> {
             updatePairs();
             updateUnusedRewards();
+            setChanged();
+            notifyObservers();
         });
     }
 
@@ -128,22 +138,20 @@ public class UserListDataManager extends Observable {
         Person newUser = new Person(userName, firstName, lastName, img, true);
         handler.allPersons().subscribe(persons -> {
             if (persons.contains(newUser)) {
-                //Toast.makeText(userListFragment.getContext(), "User already exists: " + userName, Toast.LENGTH_SHORT).show();
                 return;
             }
             handler.addPerson(newUser).subscribe(num -> {
-                //Toast.makeText(userListFragment.getContext()
-                //        , "Welcome " + newUser.getFirstName(), Toast.LENGTH_SHORT).show();
                 updateActiveUsers();
             });
         });
     }
 
+    void addUser(Person person) {
+        addUser(person.getUsername(), person.getFirstName(), person.getLastName(), person.getImage());
+    }
+
     @SuppressLint("CheckResult")
-    void editUser(Person person, String firstName, String lastName, Bitmap image) {
-        person.setFirstName(firstName);
-        person.setLastName(lastName);
-        person.setImage(ImageReader.bitmapToByte(image));
+    void editUser(Person person) {
         handler.udpatePerson(person).subscribe(integer -> {
             Log.d("Room", "User edited");
             updateActiveUsers();
@@ -154,9 +162,6 @@ public class UserListDataManager extends Observable {
     void addPair(Pair pair) {
         handler.addPair(pair).subscribe(
                 longs -> {
-                   // Toast.makeText(userListFragment.getContext(),
-                    //        "Added pair programming with: " + pair.getPerson1() +
-                    //                " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
                     updatePairs();
                 },
                 error -> error.printStackTrace());

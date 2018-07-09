@@ -1,27 +1,20 @@
-package com.BetterTogether.app;
+package com.BetterTogether.app.AlertDialogs;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
+
+import com.BetterTogether.app.R;
+import com.BetterTogether.app.UserListFragment;
 
 import DB.RewardType;
 
 
-public class RewardPopup {
-
-    private UserListFragment rewardStatus;
-    private LayoutInflater layoutInflater;
-    private AlertDialog.Builder alertBuilder;
-
+public class RewardPopup extends PopupView {
 
     public RewardPopup(UserListFragment userListFragment) {
-        rewardStatus = userListFragment;
-        layoutInflater = (LayoutInflater) rewardStatus.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        alertBuilder = new AlertDialog.Builder(rewardStatus.getContext());
-
+        super(userListFragment);
     }
 
     public void whistle(RewardType rewardType) {
@@ -41,6 +34,7 @@ public class RewardPopup {
         }
 
         alertBuilder.setPositiveButton(R.string.ok, (dialog, id) -> {
+            userListFragment.setPopupIsActiveFalse();
             dialog.dismiss();
         });
 
@@ -56,8 +50,8 @@ public class RewardPopup {
         alertBuilder.setMessage("Do you want to claim a " + rewardType.toString() + " event?");
 
         alertBuilder.setPositiveButton(R.string.yes, (dialog, id) -> {
-            rewardStatus.getManager().setUseVariableToTrue(rewardType);
-            Toast confirmMsg = Toast.makeText(rewardStatus.getContext(), "You have claimed " + rewardType.toString(), Toast.LENGTH_SHORT);
+            userListFragment.getManager().setUseVariableToTrue(rewardType);
+            Toast confirmMsg = Toast.makeText(userListFragment.getContext(), "You have claimed " + rewardType.toString(), Toast.LENGTH_SHORT);
             confirmMsg.setGravity(Gravity.TOP | Gravity.LEFT, 0, 0);
             confirmMsg.show();
             dialog.dismiss();
