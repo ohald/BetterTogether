@@ -4,11 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Observable;
 
 import DB.DatabaseThreadHandler;
 import DB.RewardType;
@@ -17,65 +18,108 @@ import DB.Tables.Person;
 import DB.Tables.Reward;
 import JSONReader.ImageReader;
 
-public class UserListDataManager {
+public class UserListDataManager extends Observable {
 
     private DatabaseThreadHandler handler;
-    private UserListFragment userListFragment;
-    private List<Person> users;
+    private List<Person> allUsers;
+    private List<Person> activeUsers;
 
+    private List<Pair> allPairs;
 
-    UserListDataManager(UserListFragment userListFragment, DatabaseThreadHandler handler) {
-        this.userListFragment = userListFragment;
+    private List<Pair> pizzaPairs;
+    private List<Pair> cakePairs;
+    private int cakeThreshold;
+    private int pizzaThreshold;
+
+    private int unusedCake;
+    private int unusedPizza;
+
+    UserListDataManager(DatabaseThreadHandler handler) {
         this.handler = handler;
+        cakeThreshold = 10000;
+        pizzaThreshold = 10000;
+        unusedCake = -1;
+        unusedPizza = -1;
+        pizzaPairs = new ArrayList<>();
+        cakePairs = new ArrayList<>();
+        allPairs = new ArrayList<>();
+        allUsers = new ArrayList<>();
+        activeUsers = new ArrayList<>();
+
+        //get data from database
+        updatePairs();
+        updateThresholds();
+        updateUnusedRewards();
+        updateAllUsers();
+        updateActiveUsers();
     }
 
     @SuppressLint("CheckResult")
-    void getPairs() {
+    void updatePairs() {
         handler.getPairHistory(new Date(new GregorianCalendar(1900, 01, 01,
                 00, 00, 00).getTimeInMillis()))
-                .subscribe(pairs -> userListFragment.setAllPairs(pairs));
+                .subscribe(pairs -> {
+                    this.allPairs = pairs;
+                    setChanged();
+                    notifyObservers();
+                });
 
-        handler.getPairsSinceLastReward(RewardType.PIZZA).subscribe(pairs ->
-                userListFragment.setPizzaPairs(pairs));
+        handler.getPairsSinceLastReward(RewardType.PIZZA).subscribe(pairs -> {
+                this.pizzaPairs = pairs;
+                setChanged();
+                notifyObservers();
+    });
 
-        handler.getPairsSinceLastReward(RewardType.CAKE).subscribe(pairs ->
-                userListFragment.setCakePairs(pairs));
+        handler.getPairsSinceLastReward(RewardType.CAKE).subscribe(pairs -> {
+                this.cakePairs = pairs;
+                setChanged();
+                notifyObservers();
+        });
+
     }
 
     @SuppressLint("CheckResult")
-    void getThresholds() {
+    void updateThresholds() {
         handler.getThreshold(RewardType.PIZZA).subscribe(threshold ->
-                userListFragment.setPizzaThreshold(threshold));
+                this.pizzaThreshold = threshold);
 
         handler.getThreshold(RewardType.CAKE).subscribe(threshold ->
-                userListFragment.setCakeThreshold(threshold));
+                this.cakeThreshold = threshold);
     }
 
     @SuppressLint("CheckResult")
-    void getUnusedRewards() {
+    void updateUnusedRewards() {
         handler.getUnusedRewardsCount(RewardType.CAKE).subscribe(count ->
-                userListFragment.setUnusedCake(count));
+                this.unusedCake = count);
 
         handler.getUnusedRewardsCount(RewardType.PIZZA).subscribe(count ->
-                userListFragment.setUnusedPizza(count));
+                this.unusedPizza = count);
     }
 
     @SuppressLint("CheckResult")
-    void getActiveUsers() {
+    void updateActiveUsers() {
         handler.allActivePersons().subscribe(
                 persons -> {
-                    userListFragment.setUpGridView(persons);
-                    users = persons;
-                },
-                error -> Toast.makeText(userListFragment.getContext(),
-                        "Failed loading users from database", Toast.LENGTH_SHORT).show());
+                    activeUsers = persons;
+                    setChanged();
+                    notifyObservers();
+                });
+    }
+
+
+    @SuppressLint("CheckResult")
+    void updateAllUsers() {
+        handler.allPersons().subscribe(
+                persons -> {
+                    allUsers = persons;
+                });
     }
 
     @SuppressLint("CheckResult")
     void addReward(RewardType type) {
         handler.addNewReward(new Reward(new Date(), type)).subscribe(longs -> {
-            getPairs();
-            getUnusedRewards();
+            updatePairs();
+            updateUnusedRewards();
         });
     }
 
@@ -84,13 +128,13 @@ public class UserListDataManager {
         Person newUser = new Person(userName, firstName, lastName, img, true);
         handler.allPersons().subscribe(persons -> {
             if (persons.contains(newUser)) {
-                Toast.makeText(userListFragment.getContext(), "User already exists: " + userName, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(userListFragment.getContext(), "User already exists: " + userName, Toast.LENGTH_SHORT).show();
                 return;
             }
             handler.addPerson(newUser).subscribe(num -> {
-                Toast.makeText(userListFragment.getContext()
-                        , "Welcome " + newUser.getFirstName(), Toast.LENGTH_SHORT).show();
-                getActiveUsers();
+                //Toast.makeText(userListFragment.getContext()
+                //        , "Welcome " + newUser.getFirstName(), Toast.LENGTH_SHORT).show();
+                updateActiveUsers();
             });
         });
     }
@@ -102,7 +146,7 @@ public class UserListDataManager {
         person.setImage(ImageReader.bitmapToByte(image));
         handler.udpatePerson(person).subscribe(integer -> {
             Log.d("Room", "User edited");
-            getActiveUsers();
+            updateActiveUsers();
         }, error -> error.printStackTrace());
     }
 
@@ -110,14 +154,12 @@ public class UserListDataManager {
     void addPair(Pair pair) {
         handler.addPair(pair).subscribe(
                 longs -> {
-                    Toast.makeText(userListFragment.getContext(),
-                            "Added pair programming with: " + pair.getPerson1() +
-                                    " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
-                    getPairs();
+                   // Toast.makeText(userListFragment.getContext(),
+                    //        "Added pair programming with: " + pair.getPerson1() +
+                    //                " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
+                    updatePairs();
                 },
-                error -> Toast.makeText(userListFragment.getContext(),
-                        "Something went wrong while inserting to database.",
-                        Toast.LENGTH_SHORT).show());
+                error -> error.printStackTrace());
     }
 
 
@@ -127,7 +169,7 @@ public class UserListDataManager {
             rewards.get(0).setUsedReward(true);
             handler.useReward(rewards.get(0)).subscribe(integer -> {
                 Log.d("Room", "Used reward");
-                getUnusedRewards();
+                updateUnusedRewards();
             }, error -> Log.d("Room", "failed to edit reward"));
 
         });
@@ -136,5 +178,40 @@ public class UserListDataManager {
     public void refreshDB(Context context) {
         handler.refreshDB(context);
     }
-}
 
+    public List<Person> getAllUsers() {
+        return allUsers;
+    }
+
+    public List<Pair> getAllPairs() {
+        return allPairs;
+    }
+
+    public List<Pair> getPizzaPairs() {
+        return pizzaPairs;
+    }
+
+    public List<Pair> getCakePairs() {
+        return cakePairs;
+    }
+
+    public int getCakeThreshold() {
+        return cakeThreshold;
+    }
+
+    public int getPizzaThreshold() {
+        return pizzaThreshold;
+    }
+
+    public int getUnusedCake() {
+        return unusedCake;
+    }
+
+    public int getUnusedPizza() {
+        return unusedPizza;
+    }
+
+    public List<Person> getActiveUsers() {
+        return activeUsers;
+    }
+}
