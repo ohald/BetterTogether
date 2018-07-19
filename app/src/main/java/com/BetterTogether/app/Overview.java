@@ -6,6 +6,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
+import com.BetterTogether.app.Fragments.GraphFragment;
+import com.BetterTogether.app.Fragments.UserListFragment;
 import com.BetterTogether.app.adapters.TabAdapter;
 
 

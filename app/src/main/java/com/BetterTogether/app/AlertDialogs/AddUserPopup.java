@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.BetterTogether.app.R;
-import com.BetterTogether.app.UserListFragment;
+import com.BetterTogether.app.Fragments.UserListFragment;
 
-import DB.Tables.Person;
-import JSONReader.ImageReader;
+import com.BetterTogether.app.Logic.Person;
+import DB.ImageReader;
 
 public class AddUserPopup extends PopupView {
 
@@ -24,8 +24,7 @@ public class AddUserPopup extends PopupView {
 
     private TextView staticUsername;
     private EditText username;
-    private EditText firstName;
-    private EditText lastName;
+    private EditText name;
 
     private Button image;
     private Button add;
@@ -44,8 +43,7 @@ public class AddUserPopup extends PopupView {
         alertBuilder.setView(popupView);
         staticUsername = popupView.findViewById(R.id.editUsername);
         username = popupView.findViewById(R.id.username);
-        firstName = popupView.findViewById(R.id.first_name);
-        lastName = popupView.findViewById(R.id.last_name);
+        name = popupView.findViewById(R.id.first_name);
         userImage = popupView.findViewById(R.id.mImageView);
         userImage.setImageBitmap(ImageReader.imageToBitmap(userListFragment.getContext(), defaultImage));
 
@@ -75,8 +73,7 @@ public class AddUserPopup extends PopupView {
         add.setText("Edit User");
         staticUsername.setText(person.getUsername());
         username.setText(person.getUsername());
-        firstName.setText(person.getFirstName());
-        lastName.setText(person.getLastName());
+        name.setText(person.getName());
         userImage.setImageBitmap(ImageReader.byteArrayToBitmap(person.getImage()));
         username.setVisibility(View.INVISIBLE);
     }
@@ -86,8 +83,7 @@ public class AddUserPopup extends PopupView {
     }
 
     public Person getPerson() {
-        return new Person(username.getText().toString(), firstName.getText().toString(),
-                lastName.getText().toString(), ImageReader.bitmapToByte(
+        return new Person(username.getText().toString(), name.getText().toString(), ImageReader.bitmapToByte(
                 ((BitmapDrawable) userImage.getDrawable()).getBitmap()));
     }
 
@@ -108,7 +104,7 @@ public class AddUserPopup extends PopupView {
         manager.addUser(username.getText().
 
     toString(),
-                firstName.getText().
+                name.getText().
 
     toString(),lastName.
 
@@ -126,11 +122,11 @@ public class AddUserPopup extends PopupView {
 
                 if(person==null){
                         manager.addUser(username.getText().toString(),
-                        firstName.getText().toString(),lastName.getText().toString(),
+                        name.getText().toString(),lastName.getText().toString(),
                         ImageReader.bitmapToByte(
                         ((BitmapDrawable)userImage.getDrawable()).getBitmap()));
                         }else
-                        manager.editUser(person,firstName.getText().toString(),
+                        manager.editUser(person,name.getText().toString(),
                         lastName.getText().toString(),
                         ((BitmapDrawable)userImage.getDrawable()).getBitmap());
                         //reset camera image

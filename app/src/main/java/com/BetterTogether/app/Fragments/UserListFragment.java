@@ -1,4 +1,4 @@
-package com.BetterTogether.app;
+package com.BetterTogether.app.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -17,6 +17,9 @@ import android.widget.Toast;
 
 import com.BetterTogether.app.AlertDialogs.AddUserPopup;
 import com.BetterTogether.app.AlertDialogs.RewardPopup;
+
+import com.BetterTogether.app.DataManager;
+import com.BetterTogether.app.R;
 import com.BetterTogether.app.adapters.UserListAdapter;
 
 import java.util.ArrayList;
@@ -25,21 +28,25 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import DB.DatabaseThreadHandler;
 import DB.RewardType;
-import DB.Tables.Pair;
-import DB.Tables.Person;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+
+import com.BetterTogether.app.Logic.Pair;
+import com.BetterTogether.app.Logic.Person;
 
 import static android.app.Activity.RESULT_OK;
 
-public class UserListFragment extends Fragment implements Observer {
 
-    private ArrayList<Integer> selectedItems;
+public class UserListFragment extends Fragment implements Observer {
+        private ArrayList<Integer> selectedItems;
 
     private DataManager manager;
+    private int cakeThreshold;
+    private int pizzaThreshold;
 
+    private int unusedCake;
+    private int unusedPizza;
+
+    private List<Person> users;
     private GridView gridView;
 
     private AddUserPopup addUserPopup;
@@ -56,17 +63,14 @@ public class UserListFragment extends Fragment implements Observer {
     @SuppressLint("CheckResult")
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+
         selectedItems = new ArrayList<>();
 
-        manager = new DataManager(new DatabaseThreadHandler(
-                getActivity().getApplicationContext(), Schedulers.io(),
-                AndroidSchedulers.mainThread()));
+        manager = new DataManager();
         manager.addObserver(this);
+
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
-
-        //add initial data to database
-        manager.refreshDB(getContext());
 
         Button addUser = getView().findViewById(R.id.add_user);
         addUser.setOnClickListener(view_user -> createOrEditUser(null));
@@ -96,6 +100,7 @@ public class UserListFragment extends Fragment implements Observer {
                         Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private void selectItemAtPosition(int position) {
@@ -164,7 +169,7 @@ public class UserListFragment extends Fragment implements Observer {
             Toast.makeText(getContext(), "Username already taken", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (person.getUsername().equals("") || person.getFirstName().equals("") || person.getLastName().equals("")) {
+        if (person.getUsername().equals("") || person.getName().equals("")) {
             Toast.makeText(getContext(), "You need to fill in all fields", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -195,6 +200,7 @@ public class UserListFragment extends Fragment implements Observer {
             RewardPopup popup = new RewardPopup(this);
             popup.whistle(RewardType.PIZZA);
             return;
+
         }
         if (manager.getCakePairs().size() == manager.getCakeThreshold()) {
             popupIsActive = true;

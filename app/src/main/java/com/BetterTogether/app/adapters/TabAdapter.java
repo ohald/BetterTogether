@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.BetterTogether.app.GraphFragment;
-import com.BetterTogether.app.UserListFragment;
+import com.BetterTogether.app.Fragments.GraphFragment;
+import com.BetterTogether.app.Fragments.UserListFragment;
 
 public class TabAdapter extends FragmentStatePagerAdapter {
 

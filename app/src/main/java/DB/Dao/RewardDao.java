@@ -1,57 +1,44 @@
 package DB.Dao;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
-
-import java.util.Date;
 import java.util.List;
 
 import DB.RewardType;
-import DB.Tables.Reward;
-import DB.Tables.Threshold;
+import DB.ApiResponseHelpers.RewardResponse;
+import DB.ApiResponseHelpers.ThresholdResponse;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
-import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
-@Dao
 public interface RewardDao {
 
-    @Query("SELECT threshold FROM threshold_table WHERE type=:type")
-    int getThreshold(RewardType type);
 
-    @Query("SELECT COUNT(*) FROM threshold_table")
-    int getEntries();
+    @GET("/api/threshold/get/{reward_type}")
+    Call<List<ThresholdResponse>> getThreshold(@Path("reward_type") RewardType type);
 
-    @Query("SELECT date FROM reward_table WHERE date = (SELECT max(date) FROM reward_table WHERE type =:type)")
-    Date getLastRewardDate(RewardType type);
+    @GET("/api/reward/unused/{reward_type}")
+    Call<Integer> numberOfUnusedRewards(@Path("reward_type") RewardType type);
 
-    @Query("SELECT type FROM reward_table WHERE date = (SELECT max (date) FROM reward_table)")
-    RewardType getLastRewardType();
+    @GET("/api/reward/unused/earliest/{reward_type}")
+    Call<List<RewardResponse>> getEarliestUnusedReward(RewardType type);
 
-    @Query("SELECT COUNT(*) FROM reward_table")
-    int getNumberOfRewards();
+    @PUT("/api/reward/use/{reward_type}")
+    Call<List<RewardResponse>> updateReward(@Path("reward_type") String rewardtype);
 
-    //0 equals false
-    @Query("SELECT COUNT(*) FROM reward_table WHERE type = :type AND usedReward = 0")
-    int numberOfUnusedRewards(RewardType type);
+    @POST("/api/reward/add")
+    Call<List<RewardResponse>> addReward(@Body RewardResponse reset);
 
-    @Query("SELECT * FROM reward_table WHERE type=:type AND usedReward=0")
-    List<Reward> getEarliestUnusedReward(RewardType type);
+    @PUT("/api/threshold/update/{reward_type}")
+    Call<List<ThresholdResponse>> setThreshold(@Body ThresholdResponse newThreshold);
 
-    @Update
-    int updateReward(Reward reward);
+    //not in api
 
-    @Insert
-    long addReward(Reward reset);
-
-    @Insert
-    long[] addReward(Reward... reset);
-
-    @Insert(onConflict = REPLACE)
-    long[] addThresholds(Threshold... newThresholds);
-
-    @Update
-    int setThreshold(Threshold newThreshold);
+    //int getEntries();
+    //Date getLastRewardDate(RewardType type);
+    //RewardType getLastRewardType();
+    //int getNumberOfRewards();
 
 }

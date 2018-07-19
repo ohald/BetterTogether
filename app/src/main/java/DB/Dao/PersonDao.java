@@ -1,42 +1,35 @@
 package DB.Dao;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
-
 import java.util.List;
 
-import DB.Tables.Person;
 
-@Dao
+import DB.ApiResponseHelpers.PersonResponse;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+
+
 public interface PersonDao {
 
+    @GET("api/user/all")
+    Call<List<PersonResponse>> getAllPersons();
 
-    @Query("SELECT * FROM people_table")
-    List<Person> getAllPersons();
+    @GET("api/user/get/{username}")
+    Call<PersonResponse> getPerson(@Path("username") String user);
 
-    @Query("SELECT * FROM people_table WHERE username=:user")
-    Person getPerson(String user);
+    @GET("api/user/active")
+    Call<List<PersonResponse>> getAllActivePersons();
 
-    @Query("SELECT COUNT(*) FROM people_table")
-    int getNumberOfUsers();
+    @POST("api/user/add")
+    Call<PersonResponse> insertPerson(@Body PersonResponse person);
 
-    //1 = true in sqlite
-    @Query("SELECT * FROM people_table WHERE active = 1")
-    List<Person> getAllActivePersons();
+    @PUT("api/user/update")
+    Call<PersonResponse> updatePerson(@Body PersonResponse person);
 
-    @Insert
-    long insertPerson(Person person);
-
-    @Insert
-    long[] insertAll(Person... persons);
-
-    @Update
-    int updatePerson(Person person);
-
-    @Delete
-        //note, all usernames are lower case
-    void deletePerson(Person person);
+    @DELETE("api/user/delete/{username}")
+    Call<PersonResponse> deletePerson(PersonResponse person);
 }

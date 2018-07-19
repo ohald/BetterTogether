@@ -13,8 +13,8 @@ import com.BetterTogether.app.R;
 
 import java.util.List;
 
-import DB.Tables.Person;
-import JSONReader.ImageReader;
+import com.BetterTogether.app.Logic.Person;
+import DB.ImageReader;
 
 public class UserListAdapter extends BaseAdapter {
 
@@ -54,12 +54,18 @@ public class UserListAdapter extends BaseAdapter {
         //set images to corresponding users
         byte[] image = dataSet.get(position).getImage();
         ImageView imageView = rowView.findViewById(R.id.profile_image);
-        Bitmap bitmap = ImageReader.byteArrayToBitmap(image);
+        Bitmap bitmap;
+
+        //TODO:find permanent solution -- remove null check.
+        if(image == null){
+            bitmap = ImageReader.imageToBitmap(rowView.getContext(), "unknown");
+        } else
+            bitmap = ImageReader.byteArrayToBitmap(image);
+
         imageView.setImageBitmap(bitmap);
 
         TextView name = rowView.findViewById(R.id.username);
-        String displayedText = dataSet.get(position).getFirstName() + " " +
-                dataSet.get(position).getLastName();
+        String displayedText = dataSet.get(position).getName();
         name.setText(displayedText);
         return rowView;
     }

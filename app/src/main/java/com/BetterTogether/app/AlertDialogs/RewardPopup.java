@@ -5,10 +5,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
+import com.BetterTogether.app.Fragments.UserListFragment;
 import com.BetterTogether.app.R;
-import com.BetterTogether.app.UserListFragment;
 
 import DB.RewardType;
+
 
 
 public class RewardPopup extends PopupView {

@@ -1,47 +1,46 @@
 package DB.Dao;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
-
 import java.util.Date;
 import java.util.List;
 
 import DB.RewardType;
-import DB.Tables.Pair;
+import DB.ApiResponseHelpers.PairResponse;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
-
-@Dao
 public interface PairDao {
 
+    @GET("api/pair/all")
+    Call<List<PairResponse>> getHistory();
 
-    @Query("SELECT * FROM pair_table WHERE date>=:startTime")
-    List<Pair> getHistory(Date startTime);
+    @POST("api/pair/all/after_date/{date}")
+    Call<List<PairResponse>> getPairsFromDate(@Path("date") @Body Date date);
 
-    @Query("SELECT * FROM pair_table WHERE date>=(SELECT max(date) FROM reward_table WHERE type=:rewardType)")
-    List<Pair> getPairsSinceLastReward(RewardType rewardType);
+    @GET("api/pair/all/after_last_reward/{reward_type}")
+    Call<List<PairResponse>> getPairsSinceLastReward(@Path("reward_type") RewardType rewardType);
 
-    @Query("SELECT COUNT(*) AS pairProgramUserTotal FROM pair_table WHERE person1 = :user OR person2 = :user")
-    int getTimesPairProgrammed(String user);
+    @GET("/api/pair/with_user/<username>")
+    Call<List<PairResponse>> getPairProgrammingPairs(@Path("username") String person);
 
-    @Query("SELECT COUNT(*) AS pairProgramTotalFromDate FROM pair_table WHERE date >= :date")
-    int getPairProgrammingTotalFromDate(Date date);
+    @GET("/api/pair/at_date/get/<date>")
+    Call<PairResponse> getPair(@Path("date") Date date);
 
-    @Query("SELECT * FROM pair_table WHERE person1 =:person OR person2 =:person")
-    List<Pair> getPairProgrammingPairs(String person);
+    @POST("/api/pair/add")
+    Call<PairResponse> insertPair(@Body PairResponse pair);
 
-    @Query("SELECT * FROM pair_table WHERE date =:date")
-    Pair getPair(Date date);
+    @PUT("/api/pair/at_date/update/<date>")
+    PairResponse updatePair(@Body PairResponse pair);
 
-    @Insert
-    long insertPair(Pair pair);
 
-    @Update
-    int updatePair(Pair pair);
+    //undefined in API
+    //Integer getPairProgrammingTotalFromDate(Date date);
 
-    @Delete
-    void deletePair(Pair pair);
+    //undefined in API
+    //@DELETE
+    //Pair deletePair(Pair pair);
 
 }

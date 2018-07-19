@@ -3,8 +3,7 @@ package com.BetterTogether.app.AlertDialogs;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
-
-import com.BetterTogether.app.UserListFragment;
+import com.BetterTogether.app.Fragments.UserListFragment;
 
 public class PopupView {
 

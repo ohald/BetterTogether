@@ -1,24 +1,32 @@
 package com.BetterTogether.app;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Observable;
 
-import DB.DatabaseThreadHandler;
+import DB.ApiClient;
+import DB.CallbackWrapper;
+import DB.Dao.PairDao;
+import DB.Dao.PersonDao;
+import DB.Dao.RewardDao;
 import DB.RewardType;
-import DB.Tables.Pair;
-import DB.Tables.Person;
-import DB.Tables.Reward;
+import com.BetterTogether.app.Logic.Pair;
+import com.BetterTogether.app.Logic.Person;
+import com.BetterTogether.app.Logic.Reward;
+import com.BetterTogether.app.Logic.Threshold;
+import DB.ApiResponseHelpers.ResponsePojoConverter;
+import DB.ApiResponseHelpers.RewardResponse;
+import retrofit2.Retrofit;
 
 public class DataManager extends Observable {
 
-    private DatabaseThreadHandler handler;
+    private Retrofit apiClient;
+    private PersonDao personDao;
+    private PairDao pairDao;
+    private RewardDao rewardDao;
+
+
     private List<Person> allUsers;
     private List<Person> activeUsers;
 
@@ -32,10 +40,16 @@ public class DataManager extends Observable {
     private int unusedCake;
     private int unusedPizza;
 
-    private boolean isAddingReward;
+    public DataManager() {
+        this(ApiClient.getRetrofitInstance());
+    }
 
-    DataManager(DatabaseThreadHandler handler) {
-        this.handler = handler;
+    public DataManager(Retrofit apiClient) {
+        this.apiClient = apiClient;
+        personDao = apiClient.create(PersonDao.class);
+        pairDao = apiClient.create(PairDao.class);
+        rewardDao = apiClient.create(RewardDao.class);
+
         cakeThreshold = 10000;
         pizzaThreshold = 10000;
         unusedCake = -1;
@@ -54,134 +68,160 @@ public class DataManager extends Observable {
         updateActiveUsers();
     }
 
-    @SuppressLint("CheckResult")
-    void updatePairs() {
-        handler.getPairHistory(new Date(new GregorianCalendar(1900, 01, 01,
-                00, 00, 00).getTimeInMillis()))
-                .subscribe(pairs -> {
-                    this.allPairs = pairs;
+    private void updatePairs() {
+        pairDao.getHistory().enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    this.allPairs = ResponsePojoConverter.pairResponseToPair(response.body());
                     setChanged();
                     notifyObservers();
-                });
+                }));
 
-        handler.getPairsSinceLastReward(RewardType.PIZZA).subscribe(pairs -> {
-            this.pizzaPairs = pairs;
-            setChanged();
-            notifyObservers();
-        });
-
-        handler.getPairsSinceLastReward(RewardType.CAKE).subscribe(pairs -> {
-            this.cakePairs = pairs;
-            setChanged();
-            notifyObservers();
-        });
-
-    }
-
-    @SuppressLint("CheckResult")
-    void updateThresholds() {
-        handler.getThreshold(RewardType.PIZZA).subscribe(threshold ->
-                this.pizzaThreshold = threshold);
-
-        handler.getThreshold(RewardType.CAKE).subscribe(threshold ->
-                this.cakeThreshold = threshold);
-    }
-
-    @SuppressLint("CheckResult")
-    void updateUnusedRewards() {
-        handler.getUnusedRewardsCount(RewardType.CAKE).subscribe(count -> {
-            this.unusedCake = count;
-            setChanged();
-            notifyObservers();
-        });
-
-        handler.getUnusedRewardsCount(RewardType.PIZZA).subscribe(count -> {
-            this.unusedPizza = count;
-            setChanged();
-            notifyObservers();
-        });
-    }
-
-    @SuppressLint("CheckResult")
-    void updateActiveUsers() {
-        handler.allActivePersons().subscribe(
-                persons -> {
-                    activeUsers = persons;
+        pairDao.getPairsSinceLastReward(RewardType.PIZZA).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    this.pizzaPairs = ResponsePojoConverter.pairResponseToPair(response.body());
                     setChanged();
                     notifyObservers();
-                });
-    }
+                })
+        );
 
-
-    @SuppressLint("CheckResult")
-    void updateAllUsers() {
-        handler.allPersons().subscribe(
-                persons -> {
-                    allUsers = persons;
+        pairDao.getPairsSinceLastReward(RewardType.CAKE).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    this.cakePairs = ResponsePojoConverter.pairResponseToPair(response.body());
                     setChanged();
                     notifyObservers();
-                });
+                })
+        );
+
     }
 
-    @SuppressLint("CheckResult")
-    void addReward(RewardType type) {
-        handler.addNewReward(new Reward(new Date(), type)).subscribe(longs -> {
-            updatePairs();
-            updateUnusedRewards();
-            setChanged();
-            notifyObservers();
-        });
+    public void setNewThresholdValue(Threshold t){
+        rewardDao.setThreshold(ResponsePojoConverter.thresholdToThresholdResponse(t)).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if(response.body().size() == 0) {
+                        throwable.printStackTrace();
+                        return;
+                    }
+
+                    if(response.body().get(0).getRewardtype() == RewardType.PIZZA)
+                        pizzaThreshold = response.body().get(0).getThreshold();
+                    else
+                        cakeThreshold = response.body().get(0).getThreshold();
+                    setChanged();
+                    notifyObservers();
+                })
+        );
     }
 
-    @SuppressLint("CheckResult")
-    void addUser(String userName, String firstName, String lastName, byte[] img) {
-        Person newUser = new Person(userName, firstName, lastName, img, true);
-        handler.allPersons().subscribe(persons -> {
-            if (persons.contains(newUser)) {
-                return;
-            }
-            handler.addPerson(newUser).subscribe(num -> {
-                updateActiveUsers();
-            });
-        });
+
+
+    private void updateThresholds() {
+        rewardDao.getThreshold(RewardType.PIZZA).enqueue(
+                new CallbackWrapper<>((throwable, response) ->
+                    this.pizzaThreshold = response.body().get(0).getThreshold()
+                ));
+        rewardDao.getThreshold(RewardType.CAKE).enqueue(
+                new CallbackWrapper<>((throwable, response) ->
+                this.cakeThreshold = response.body().get(0).getThreshold())
+        );
     }
 
-    void addUser(Person person) {
-        addUser(person.getUsername(), person.getFirstName(), person.getLastName(), person.getImage());
+
+    private void updateUnusedRewards() {
+        rewardDao.numberOfUnusedRewards(RewardType.PIZZA).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    this.unusedPizza = response.body();
+                    setChanged();
+                    notifyObservers();
+                })
+        );
+        rewardDao.numberOfUnusedRewards(RewardType.CAKE).enqueue(
+                new CallbackWrapper<>((throwable, response)-> {
+                    this.unusedCake = response.body();
+                    setChanged();
+                    notifyObservers();
+                })
+        );
     }
 
-    @SuppressLint("CheckResult")
-    void editUser(Person person) {
-        handler.udpatePerson(person).subscribe(integer -> {
-            Log.d("Room", "User edited");
-            updateActiveUsers();
-        }, error -> error.printStackTrace());
+    private void updateActiveUsers() {
+        personDao.getAllActivePersons().enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if(response.body() == null){
+                        throwable.printStackTrace();
+                        return;
+                    }
+                    activeUsers = ResponsePojoConverter.personResponseToPerson(response.body());
+                    setChanged();
+                    notifyObservers();
+                }));
     }
 
-    @SuppressLint("CheckResult")
-    void addPair(Pair pair) {
-        handler.addPair(pair).subscribe(
-                longs -> {
+
+    private void updateAllUsers() {
+        personDao.getAllPersons().enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    allUsers = ResponsePojoConverter.personResponseToPerson(response.body());
+                    setChanged();
+                    notifyObservers();
+                })
+        );
+
+    }
+
+
+    public void addReward(RewardType type) {
+        RewardResponse res = ResponsePojoConverter.rewardToRewardResponse(
+                new Reward(new Date(), type));
+
+        rewardDao.addReward(res).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
                     updatePairs();
-                },
-                error -> error.printStackTrace());
+                    updateUnusedRewards();
+                    setChanged();
+                    notifyObservers();
+
+        }));
+    }
+
+    public void addUser(String userName, String name, byte[] img) {
+        Person newUser = new Person(userName, name, img, true);
+
+        if (!allUsers.contains(newUser))
+            personDao.insertPerson(ResponsePojoConverter.personToPersonResponse(newUser)).enqueue(
+                    new CallbackWrapper<>((throwable, response) -> {
+                        updateActiveUsers();
+
+                    }));
+
+    }
+
+    public void addUser(Person person) {
+        addUser(person.getUsername(), person.getName(), person.getImage());
+    }
+
+    public void editUser(Person person) {
+        personDao.updatePerson(ResponsePojoConverter.personToPersonResponse(person)).enqueue(
+                new CallbackWrapper<>((throwable, response) ->
+                        updateActiveUsers()
+                ));
     }
 
 
-    @SuppressLint("CheckResult")
+    public void addPair(Pair pair) {
+        pairDao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
+                new CallbackWrapper<>((throwable, response) ->
+                        updatePairs()
+                ));
+    }
+
+
     public void setUseVariableToTrue(RewardType rewardType) {
-        handler.getEarliestUnusedReward(rewardType).subscribe(rewards -> {
-            rewards.get(0).setUsedReward(true);
-            handler.useReward(rewards.get(0)).subscribe(integer -> {
-                Log.d("Room", "Used reward");
-                updateUnusedRewards();
-            }, error -> Log.d("Room", "failed to edit reward"));
+        rewardDao.updateReward(rewardType.toString()).enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    updateUnusedRewards();
+                })
+        );
 
-        });
-    }
-
-    public void refreshDB(Context context) {
-        handler.refreshDB(context);
     }
 
     public List<Person> getAllUsers() {
@@ -219,4 +259,5 @@ public class DataManager extends Observable {
     public List<Person> getActiveUsers() {
         return activeUsers;
     }
+
 }

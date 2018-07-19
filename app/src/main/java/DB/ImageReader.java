@@ -1,4 +1,4 @@
-package JSONReader;
+package DB;
 
 import android.content.Context;
 import android.content.res.AssetManager;

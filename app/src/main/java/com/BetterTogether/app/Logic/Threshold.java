@@ -1,21 +1,14 @@
-package DB.Tables;
-
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+package com.BetterTogether.app.Logic;
 
 import DB.RewardType;
 
-@Entity(tableName = "threshold_table")
 public class Threshold {
 
-    @PrimaryKey
-    @NonNull
     private RewardType type;
 
     private int threshold;
 
-    public Threshold(@NonNull RewardType type, int threshold) {
+    public Threshold(RewardType type, int threshold) {
         this.type = type;
         this.threshold = threshold;
     }
