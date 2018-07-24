@@ -126,8 +126,16 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
         gridView.setOnItemLongClickListener(((adapterView, view, position, l) ->
                 createOrEditUser(persons.get(position))));
 
+        disableScrolling();
     }
 
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void disableScrolling() {
+        gridView.setOnTouchListener((View v, MotionEvent e) ->
+                e.getAction() == MotionEvent.ACTION_MOVE);
+        gridView.setVerticalScrollBarEnabled(false);
+    }
 
     private boolean createOrEditUser(Person person) {
         addUserPopup = new AddUserPopup(this);
