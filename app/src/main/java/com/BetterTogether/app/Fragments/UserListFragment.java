@@ -7,7 +7,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,11 +17,13 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.BetterTogether.app.AlertDialogs.AddUserPopup;
-import com.BetterTogether.app.AlertDialogs.RewardPopup;
+import com.BetterTogether.app.Dialogs.AddUserPopup;
+import com.BetterTogether.app.Dialogs.RewardPopup;
 
 import com.BetterTogether.app.DataManager;
+import com.BetterTogether.app.Dialogs.TokenPopup;
 import com.BetterTogether.app.R;
+import com.BetterTogether.app.TokenListener;
 import com.BetterTogether.app.adapters.UserListAdapter;
 
 import java.util.ArrayList;
@@ -30,23 +34,17 @@ import java.util.Observer;
 
 import DB.RewardType;
 
-import com.BetterTogether.app.Logic.Pair;
-import com.BetterTogether.app.Logic.Person;
+import com.BetterTogether.app.Pair;
+import com.BetterTogether.app.Person;
 
 import static android.app.Activity.RESULT_OK;
 
 
-public class UserListFragment extends Fragment implements Observer {
+public class UserListFragment extends Fragment implements Observer, TokenListener {
         private ArrayList<Integer> selectedItems;
 
     private DataManager manager;
-    private int cakeThreshold;
-    private int pizzaThreshold;
 
-    private int unusedCake;
-    private int unusedPizza;
-
-    private List<Person> users;
     private GridView gridView;
 
     private AddUserPopup addUserPopup;
@@ -66,8 +64,8 @@ public class UserListFragment extends Fragment implements Observer {
 
         selectedItems = new ArrayList<>();
 
-        manager = new DataManager();
-        manager.addObserver(this);
+        TokenPopup popup = new TokenPopup(this, this);
+        popup.setUpGetTokenView();
 
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
@@ -116,15 +114,20 @@ public class UserListFragment extends Fragment implements Observer {
         gridView.getChildAt(position).setBackgroundColor(Color.argb(126, 0, 255, 0));
     }
 
+
     void setUpGridView(List<Person> persons) {
         List<Person> activeUsers = manager.getActiveUsers();
+
         UserListAdapter adapter = new UserListAdapter(getContext(), activeUsers);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener((adapterView, view, position, l) ->
                 selectItemAtPosition(position));
+
         gridView.setOnItemLongClickListener(((adapterView, view, position, l) ->
                 createOrEditUser(persons.get(position))));
+
     }
+
 
     private boolean createOrEditUser(Person person) {
         addUserPopup = new AddUserPopup(this);
@@ -274,9 +277,23 @@ public class UserListFragment extends Fragment implements Observer {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            addUserPopup.setUserImage(imageBitmap);
+            setCameraResult(data);
         }
+    }
+
+    private void setUpDataManagerWithToken(String token){
+        manager = new DataManager(token);
+        manager.addObserver(this);
+    }
+
+    @Override
+    public void onTokenReceived(String token) {
+        setUpDataManagerWithToken(token);
+    }
+
+    private void setCameraResult(Intent data){
+        Bundle extras = data.getExtras();
+        Bitmap imageBitmap = (Bitmap) extras.get("data");
+        addUserPopup.setUserImage(imageBitmap);
     }
 }

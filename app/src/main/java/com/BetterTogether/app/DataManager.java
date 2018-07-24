@@ -11,10 +11,7 @@ import DB.Dao.PairDao;
 import DB.Dao.PersonDao;
 import DB.Dao.RewardDao;
 import DB.RewardType;
-import com.BetterTogether.app.Logic.Pair;
-import com.BetterTogether.app.Logic.Person;
-import com.BetterTogether.app.Logic.Reward;
-import com.BetterTogether.app.Logic.Threshold;
+
 import DB.ApiResponseHelpers.ResponsePojoConverter;
 import DB.ApiResponseHelpers.RewardResponse;
 import retrofit2.Retrofit;
@@ -40,8 +37,8 @@ public class DataManager extends Observable {
     private int unusedCake;
     private int unusedPizza;
 
-    public DataManager() {
-        this(ApiClient.getRetrofitInstance());
+    public DataManager(String token) {
+        this(ApiClient.getRetrofitInstance(token));
     }
 
     public DataManager(Retrofit apiClient) {
