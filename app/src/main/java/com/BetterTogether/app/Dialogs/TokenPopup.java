@@ -11,11 +11,8 @@ import com.BetterTogether.app.TokenListener;
 
 public class TokenPopup extends PopupView {
 
-    private TokenListener listener;
-
-    public TokenPopup(UserListFragment userListFragment, TokenListener listener) {
+    public TokenPopup(UserListFragment userListFragment) {
         super(userListFragment);
-        this.listener = listener;
     }
 
     public void setUpGetTokenView(){
@@ -28,7 +25,9 @@ public class TokenPopup extends PopupView {
                 .setPositiveButton("Confirm", (dialogInterface, i) -> {
                     EditText tokenInput = view.findViewById(R.id.token);
                     Log.d("TOKEN", tokenInput.getText().toString());
-                    listener.onTokenReceived(tokenInput.getText().toString());
+
+                    //notify listener
+                    userListFragment.onTokenReceived(tokenInput.getText().toString());
                 });
 
 

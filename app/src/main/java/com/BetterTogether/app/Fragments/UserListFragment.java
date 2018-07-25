@@ -32,7 +32,10 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import DB.ApiClient;
+import DB.Dao.PersonDao;
 import DB.RewardType;
+import retrofit2.Retrofit;
 
 import com.BetterTogether.app.Pair;
 import com.BetterTogether.app.Person;
@@ -64,8 +67,7 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
 
         selectedItems = new ArrayList<>();
 
-        TokenPopup popup = new TokenPopup(this, this);
-        popup.setUpGetTokenView();
+        askForToken();
 
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
@@ -227,6 +229,7 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void writeStatus() {
         if (!popupIsActive) {
             createRewardPopupIfReachedReward();
@@ -289,14 +292,20 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
         }
     }
 
-    private void setUpDataManagerWithToken(String token){
-        manager = new DataManager(token);
-        manager.addObserver(this);
+    @Override
+    public void tokenRejected(){
+        askForToken();
     }
 
     @Override
     public void onTokenReceived(String token) {
-        setUpDataManagerWithToken(token);
+        manager = new DataManager(token, this);
+        manager.addObserver(this);
+    }
+
+    private void askForToken(){
+        TokenPopup popup = new TokenPopup(this);
+        popup.setUpGetTokenView();
     }
 
     private void setCameraResult(Intent data){

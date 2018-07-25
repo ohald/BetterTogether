@@ -1,5 +1,6 @@
 package com.BetterTogether.app;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,8 +38,11 @@ public class DataManager extends Observable {
     private int unusedCake;
     private int unusedPizza;
 
-    public DataManager(String token) {
+    private TokenListener tokenListener;
+
+    public DataManager(String token, TokenListener listener) {
         this(ApiClient.getRetrofitInstance(token));
+        this.tokenListener = listener;
     }
 
     public DataManager(Retrofit apiClient) {
@@ -57,7 +61,24 @@ public class DataManager extends Observable {
         allUsers = new ArrayList<>();
         activeUsers = new ArrayList<>();
 
-        //get data from database
+        tokenIsValid();
+
+    }
+
+    public void tokenIsValid(){
+        rewardDao.getThreshold(RewardType.PIZZA).enqueue(new CallbackWrapper<>((throwable, response) -> {
+            if (response.code() == 403) {
+                tokenListener.tokenRejected();
+            } else if (response.code() == 200) {
+                initializeData();
+            } else {
+                //TODO:Error-message something
+            }
+        }));
+
+    }
+
+    private void initializeData(){
         updatePairs();
         updateThresholds();
         updateUnusedRewards();
