@@ -1,13 +1,11 @@
 package com.BetterTogether.app.Dialogs;
 
 import android.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import com.BetterTogether.app.Fragments.UserListFragment;
 import com.BetterTogether.app.R;
-import com.BetterTogether.app.TokenListener;
 
 public class TokenPopup extends PopupView {
 
