@@ -16,22 +16,22 @@ import retrofit2.http.Path;
 public interface RewardDao {
 
 
-    @GET("/threshold/get/{reward_type}")
+    @GET("/api/threshold/get/{reward_type}")
     Call<List<ThresholdResponse>> getThreshold(@Path("reward_type") RewardType type);
 
-    @GET("/reward/unused/{reward_type}")
+    @GET("/api/reward/unused/{reward_type}")
     Call<Integer> numberOfUnusedRewards(@Path("reward_type") RewardType type);
 
-    @GET("/reward/unused/earliest/{reward_type}")
+    @GET("/api/reward/unused/earliest/{reward_type}")
     Call<List<RewardResponse>> getEarliestUnusedReward(RewardType type);
 
-    @PUT("/reward/use/{reward_type}")
+    @PUT("/api/reward/use/{reward_type}")
     Call<List<RewardResponse>> updateReward(@Path("reward_type") String rewardtype);
 
-    @POST("/reward/add")
+    @POST("/api/reward/add")
     Call<List<RewardResponse>> addReward(@Body RewardResponse reset);
 
-    @PUT("/threshold/update/{reward_type}")
+    @PUT("/api/threshold/update/{reward_type}")
     Call<List<ThresholdResponse>> setThreshold(@Body ThresholdResponse newThreshold);
 
     //not in api
