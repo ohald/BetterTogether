@@ -20,7 +20,7 @@ public class CallbackWrapper<T> implements Callback<T> {
         wrapper.onResult(null, response);
     }
 
-    public static interface Wrapper<T> {
+    public interface Wrapper<T> {
         void onResult(Throwable t, Response<T> response);
     }
 }
