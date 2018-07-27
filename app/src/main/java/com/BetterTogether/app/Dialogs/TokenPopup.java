@@ -24,7 +24,6 @@ public class TokenPopup extends PopupView {
         alertBuilder.setView(view)
                 .setPositiveButton("Confirm", (dialogInterface, i) -> {
                     EditText tokenInput = view.findViewById(R.id.token);
-                    Log.d("TOKEN", tokenInput.getText().toString());
 
                     //notify listener
                     userListFragment.onTokenReceived(tokenInput.getText().toString());

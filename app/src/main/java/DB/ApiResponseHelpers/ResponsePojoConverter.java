@@ -18,7 +18,6 @@ public class ResponsePojoConverter {
         PairResponse r = new PairResponse();
         r.setPerson1(p.getPerson1());
         r.setPerson2(p.getPerson2());
-        Log.d("DATE", p.getDate().toString());
         r.setDate(Long.toString(p.getDate().getTime()));
         return r;
     }
