@@ -1,4 +1,4 @@
-package com.BetterTogether.app.AlertDialogs;
+package com.BetterTogether.app.Dialogs;
 
 import android.app.AlertDialog;
 import android.view.Gravity;

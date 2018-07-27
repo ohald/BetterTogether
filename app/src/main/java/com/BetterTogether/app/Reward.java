@@ -1,4 +1,4 @@
-package com.BetterTogether.app.Logic;
+package com.BetterTogether.app;
 import java.util.Date;
 import DB.RewardType;
 

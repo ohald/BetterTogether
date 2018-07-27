@@ -1,4 +1,4 @@
-package com.BetterTogether.app.AlertDialogs;
+package com.BetterTogether.app.Dialogs;
 
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.BetterTogether.app.R;
 import com.BetterTogether.app.Fragments.UserListFragment;
 
-import com.BetterTogether.app.Logic.Person;
+import com.BetterTogether.app.Person;
 import DB.ImageReader;
 
 public class AddUserPopup extends PopupView {

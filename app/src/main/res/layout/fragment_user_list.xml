@@ -127,15 +127,15 @@
 
     <GridView
         android:id="@+id/user_list"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/total_ppm"
         android:layout_above="@+id/pair_buttons"
-        android:horizontalSpacing="10dp"
-        android:numColumns="2"
-        android:stretchMode="columnWidth"
+        android:columnWidth="100dp"
         android:verticalSpacing="10dp"
-        android:scrollbars="vertical"/>
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:numColumns="auto_fit" />
 
     <LinearLayout
         android:id="@+id/pair_buttons"

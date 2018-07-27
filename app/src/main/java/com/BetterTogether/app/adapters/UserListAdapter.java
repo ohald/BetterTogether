@@ -13,7 +13,7 @@ import com.BetterTogether.app.R;
 
 import java.util.List;
 
-import com.BetterTogether.app.Logic.Person;
+import com.BetterTogether.app.Person;
 import DB.ImageReader;
 
 public class UserListAdapter extends BaseAdapter {
@@ -49,25 +49,28 @@ public class UserListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        View rowView = inflater.inflate(R.layout.user_list_element, parent, false);
-
+        View cellView = inflater.inflate(R.layout.user_list_element, parent, false);
         //set images to corresponding users
         byte[] image = dataSet.get(position).getImage();
-        ImageView imageView = rowView.findViewById(R.id.profile_image);
+        ImageView imageView = cellView.findViewById(R.id.profile_image);
         Bitmap bitmap;
 
         //TODO:find permanent solution -- remove null check.
         if(image == null){
-            bitmap = ImageReader.imageToBitmap(rowView.getContext(), "unknown");
-        } else
+            bitmap = ImageReader.imageToBitmap(cellView.getContext(), "unknown");
+        } else {
             bitmap = ImageReader.byteArrayToBitmap(image);
+        }
 
         imageView.setImageBitmap(bitmap);
 
-        TextView name = rowView.findViewById(R.id.username);
+        TextView name = cellView.findViewById(R.id.username);
+
+        //display first name
         String displayedText = dataSet.get(position).getName();
-        name.setText(displayedText);
-        return rowView;
+        String[] parts = displayedText.split(" ");
+        name.setText(parts[0]);
+        return cellView;
     }
 
 }

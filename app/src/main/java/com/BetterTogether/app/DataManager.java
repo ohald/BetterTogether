@@ -11,10 +11,7 @@ import DB.Dao.PairDao;
 import DB.Dao.PersonDao;
 import DB.Dao.RewardDao;
 import DB.RewardType;
-import com.BetterTogether.app.Logic.Pair;
-import com.BetterTogether.app.Logic.Person;
-import com.BetterTogether.app.Logic.Reward;
-import com.BetterTogether.app.Logic.Threshold;
+
 import DB.ApiResponseHelpers.ResponsePojoConverter;
 import DB.ApiResponseHelpers.RewardResponse;
 import retrofit2.Retrofit;
@@ -40,8 +37,11 @@ public class DataManager extends Observable {
     private int unusedCake;
     private int unusedPizza;
 
-    public DataManager() {
-        this(ApiClient.getRetrofitInstance());
+    private TokenListener tokenListener;
+
+    public DataManager(String token, TokenListener listener) {
+        this(ApiClient.getRetrofitInstance(token));
+        this.tokenListener = listener;
     }
 
     public DataManager(Retrofit apiClient) {
@@ -60,7 +60,24 @@ public class DataManager extends Observable {
         allUsers = new ArrayList<>();
         activeUsers = new ArrayList<>();
 
-        //get data from database
+        validateToken();
+
+    }
+
+    private void validateToken(){
+        rewardDao.getThreshold(RewardType.PIZZA).enqueue(new CallbackWrapper<>((throwable, response) -> {
+            if (response.code() == 403) {
+                tokenListener.tokenRejected();
+            } else if (response.code() == 200) {
+                initializeData();
+            } else {
+                //TODO:Error-message something
+            }
+        }));
+
+    }
+
+    private void initializeData(){
         updatePairs();
         updateThresholds();
         updateUnusedRewards();

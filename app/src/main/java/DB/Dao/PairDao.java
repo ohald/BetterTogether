@@ -14,16 +14,16 @@ import retrofit2.http.Path;
 
 public interface PairDao {
 
-    @GET("api/pair/all")
+    @GET("/api/pair/all")
     Call<List<PairResponse>> getHistory();
 
-    @POST("api/pair/all/after_date/{date}")
+    @POST("/api/pair/all/after_date/{date}")
     Call<List<PairResponse>> getPairsFromDate(@Path("date") @Body Date date);
 
-    @GET("api/pair/all/after_last_reward/{reward_type}")
+    @GET("/api/pair/all/after_last_reward/{reward_type}")
     Call<List<PairResponse>> getPairsSinceLastReward(@Path("reward_type") RewardType rewardType);
 
-    @GET("/api/pair/with_user/<username>")
+    @GET("/pair/with_user/<username>")
     Call<List<PairResponse>> getPairProgrammingPairs(@Path("username") String person);
 
     @GET("/api/pair/at_date/get/<date>")

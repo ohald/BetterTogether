@@ -7,10 +7,10 @@ import java.util.Date;
 import java.util.List;
 
 import DB.RewardType;
-import com.BetterTogether.app.Logic.Pair;
-import com.BetterTogether.app.Logic.Person;
-import com.BetterTogether.app.Logic.Reward;
-import com.BetterTogether.app.Logic.Threshold;
+import com.BetterTogether.app.Pair;
+import com.BetterTogether.app.Person;
+import com.BetterTogether.app.Reward;
+import com.BetterTogether.app.Threshold;
 
 public class ResponsePojoConverter {
 
@@ -18,7 +18,6 @@ public class ResponsePojoConverter {
         PairResponse r = new PairResponse();
         r.setPerson1(p.getPerson1());
         r.setPerson2(p.getPerson2());
-        Log.d("DATE", p.getDate().toString());
         r.setDate(Long.toString(p.getDate().getTime()));
         return r;
     }

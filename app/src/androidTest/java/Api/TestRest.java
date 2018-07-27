@@ -16,11 +16,11 @@ import java.util.List;
 import DB.Dao.PairDao;
 import DB.Dao.RewardDao;
 import DB.RewardType;
-import com.BetterTogether.app.Logic.Pair;
+import com.BetterTogether.app.Pair;
 
 import DB.Dao.PersonDao;
-import com.BetterTogether.app.Logic.Reward;
-import com.BetterTogether.app.Logic.Threshold;
+import com.BetterTogether.app.Reward;
+import com.BetterTogether.app.Threshold;
 import DB.ApiResponseHelpers.PairResponse;
 import DB.ApiResponseHelpers.PersonResponse;
 import DB.ApiResponseHelpers.ResponsePojoConverter;
@@ -52,7 +52,6 @@ public class TestRest {
     @Before
     public void createDb(){
         HttpUrl url = mockBackend.url("/");
-        //String url = ("http://10.52.131.216:5000/");
         API = new Retrofit.Builder()
                 .client(new OkHttpClient.Builder().build())
                 .addConverterFactory(JacksonConverterFactory.create())
