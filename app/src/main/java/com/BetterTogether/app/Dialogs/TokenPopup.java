@@ -13,9 +13,9 @@ public class TokenPopup extends PopupView {
         super(userListFragment);
     }
 
-    public void setUpGetTokenView(){
+    public void setUpGetTokenView(String message){
         alertBuilder
-                .setMessage("You need an access token to access the database.")
+                .setMessage(message)
                 .setTitle("Access token");
 
         View view = layoutInflater.inflate(R.layout.token_popup, null);

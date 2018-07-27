@@ -67,7 +67,7 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
 
         selectedItems = new ArrayList<>();
 
-        askForToken();
+        askForToken(false);
 
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
@@ -294,7 +294,7 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
 
     @Override
     public void tokenRejected(){
-        askForToken();
+        askForToken(true);
     }
 
     @Override
@@ -303,9 +303,14 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
         manager.addObserver(this);
     }
 
-    private void askForToken(){
-        TokenPopup popup = new TokenPopup(this);
-        popup.setUpGetTokenView();
+    private void askForToken(boolean rejected){
+        String message = rejected ?
+                "Token rejected." :
+                "Valid token needed for access.";
+        // Opens dialog containing void setPositiveButton() method
+        // from android API.
+        // tokenReceived() is called when token is received
+        new TokenPopup(this).setUpGetTokenView(message);
     }
 
     private void setCameraResult(Intent data){
