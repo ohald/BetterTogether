@@ -60,11 +60,11 @@ public class DataManager extends Observable {
         allUsers = new ArrayList<>();
         activeUsers = new ArrayList<>();
 
-        tokenIsValid();
+        validateToken();
 
     }
 
-    public void tokenIsValid(){
+    private void validateToken(){
         rewardDao.getThreshold(RewardType.PIZZA).enqueue(new CallbackWrapper<>((throwable, response) -> {
             if (response.code() == 403) {
                 tokenListener.tokenRejected();

@@ -298,7 +298,7 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
     }
 
     @Override
-    public void onTokenReceived(String token) {
+    public void tokenReceived(String token) {
         manager = new DataManager(token, this);
         manager.addObserver(this);
     }

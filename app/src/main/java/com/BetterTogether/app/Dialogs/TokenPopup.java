@@ -23,8 +23,8 @@ public class TokenPopup extends PopupView {
                 .setPositiveButton("Confirm", (dialogInterface, i) -> {
                     EditText tokenInput = view.findViewById(R.id.token);
 
-                    //notify listener
-                    userListFragment.onTokenReceived(tokenInput.getText().toString());
+                    //notify userListFragment, which acts as listener
+                    userListFragment.tokenReceived(tokenInput.getText().toString());
                 });
 
 
