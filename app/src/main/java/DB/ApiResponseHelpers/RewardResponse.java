@@ -21,7 +21,7 @@ public class RewardResponse {
     private String reward_type;
 
     @JsonProperty("used_reward")
-    private String usedreward;
+    private String used_reward;
 
     @JsonProperty("date")
     public String getDate() {
@@ -34,21 +34,21 @@ public class RewardResponse {
     }
 
     @JsonProperty("reward_type")
-    public RewardType getRewardtype() {
+    public RewardType getRewardType() {
         return RewardType.fromString(reward_type);
     }
 
     @JsonProperty("reward_type")
-    public void setRewardType(String rewardtype) {
-        this.reward_type = rewardtype;
+    public void setRewardType(String reward_type) {
+        this.reward_type = reward_type;
     }
 
     @JsonProperty("used_reward")
-    public Boolean getUsedReward(){ return Boolean.parseBoolean(usedreward); }
+    public Boolean getUsedReward(){ return Boolean.parseBoolean(used_reward); }
 
     @JsonProperty("used_reward")
-    public void setUsedReward(String usedreward) {
-        this.usedreward = usedreward;
+    public void setUsedReward(String used_reward) {
+        this.used_reward = used_reward;
     }
 
 

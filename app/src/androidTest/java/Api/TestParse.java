@@ -33,13 +33,12 @@ import okhttp3.mockwebserver.MockWebServer;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
-public class TestRest {
+public class TestParse {
 
     private PersonDao personDao;
     private PairDao pairDao;
@@ -136,38 +135,38 @@ public class TestRest {
     }
 
     @Test
-    public void canReadSingleNumberResponse() throws IOException {
+    public void canParseSingleNumberResponse() throws IOException {
         addNumberResponse();
         Integer i = rewardDao.numberOfUnusedRewards(RewardType.PIZZA).execute().body();
         assertThat(i, equalTo(1));
     }
 
     @Test
-    public void canReadThresholdResponse() throws IOException {
+    public void canParseThresholdResponse() throws IOException {
         addThresholdResponse();
         ThresholdResponse r = rewardDao.setThreshold
                 (ResponsePojoConverter.thresholdToThresholdResponse
                         (new Threshold(RewardType.PIZZA, 50))).execute().body().get(0);
 
-        assertThat(r.getRewardtype(), equalTo(RewardType.PIZZA));
+        assertThat(r.getRewardType(), equalTo(RewardType.PIZZA));
         assertThat(r.getThreshold(), equalTo(50));
     }
 
 
     @Test
-    public void canReadRewardResponse() throws IOException{
+    public void canParseRewardResponse() throws IOException{
         addRewardResponse();
         RewardResponse r = ResponsePojoConverter.rewardToRewardResponse(new Reward(new Date(), RewardType.PIZZA));
         RewardResponse res = rewardDao.addReward(r).execute().body().get(0);
 
         assertThat(res.getDate(), equalTo("10000"));
-        assertThat(res.getRewardtype(), equalTo(RewardType.PIZZA));
+        assertThat(res.getRewardType(), equalTo(RewardType.PIZZA));
         assertThat(res.getUsedReward(), equalTo(false));
     }
 
 
     @Test
-    public void getPersonFromApiGivesPersonWithSameFields() throws IOException {
+    public void canParsePersonResponse() throws IOException {
         addUserResponse();
         PersonResponse p = personDao.getPerson("ohald").execute().body();
 
@@ -177,7 +176,7 @@ public class TestRest {
     }
 
     @Test
-    public void getListOfPersonsWithOnePersonResponseFromApiGivesListOfPersonsWithSizeOne() throws IOException{
+    public void canParseListOfPeople() throws IOException{
         addUserListResponse();
 
         List<PersonResponse> response = personDao.getAllPersons().execute().body();
@@ -186,7 +185,7 @@ public class TestRest {
 
 
     @Test
-    public void addPairToApiReturnsPairResponse() throws IOException{
+    public void canParsePairResponse() throws IOException{
         addPairResponse();
         Pair p = new Pair("esog", "ohald", new Date(10000000));
         PairResponse p1 = pairDao.insertPair(
@@ -198,7 +197,7 @@ public class TestRest {
     }
 
     @Test
-    public void getAllPairsWithOnePairResponseReturnsListOfPairsWithLengthOne() throws IOException{
+    public void canParseListOfPairs() throws IOException{
         addPairListResponse();
         assertThat(pairDao.getHistory().execute().body().size(), equalTo(1));
     }

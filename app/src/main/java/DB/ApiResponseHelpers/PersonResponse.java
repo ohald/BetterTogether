@@ -40,8 +40,8 @@ public class PersonResponse {
     }
 
     @JsonProperty("name")
-    public void setName(String firstname) {
-        this.name = firstname;
+    public void setName(String name) {
+        this.name = name;
     }
 
 

@@ -131,7 +131,7 @@ public class DataManager extends Observable {
                         return;
                     }
 
-                    if(response.body().get(0).getRewardtype() == RewardType.PIZZA)
+                    if(response.body().get(0).getRewardType() == RewardType.PIZZA)
                         pizzaThreshold = response.body().get(0).getThreshold();
                     else
                         cakeThreshold = response.body().get(0).getThreshold();

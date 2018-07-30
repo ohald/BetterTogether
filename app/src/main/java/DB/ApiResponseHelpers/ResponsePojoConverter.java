@@ -60,7 +60,7 @@ public class ResponsePojoConverter {
     }
 
     public static Reward rewardResponseToReward(RewardResponse r){
-        return new Reward(new Date(Long.parseLong(r.getDate())), r.getRewardtype());
+        return new Reward(new Date(Long.parseLong(r.getDate())), r.getRewardType());
     }
 
     public static RewardResponse rewardToRewardResponse(Reward r){
