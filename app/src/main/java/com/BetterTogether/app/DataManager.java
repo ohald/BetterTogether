@@ -77,6 +77,18 @@ public class DataManager extends Observable {
 
     }
 
+    public boolean isRewardReached(RewardType type){
+        if(pizzaPairs.size() >= pizzaThreshold && type == RewardType.PIZZA){
+            addReward(RewardType.PIZZA);
+            return true;
+        }
+        if(cakePairs.size() >= cakeThreshold && type == RewardType.CAKE){
+            addReward(RewardType.CAKE);
+            return true;
+        }
+        return false;
+    }
+
     private void initializeData(){
         updatePairs();
         updateThresholds();

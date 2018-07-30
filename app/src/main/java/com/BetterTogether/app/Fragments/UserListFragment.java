@@ -207,20 +207,13 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
     }
 
     public void createRewardPopupIfReachedReward() {
-        if (manager.getPizzaPairs().size() == manager.getPizzaThreshold()) {
+        if (manager.isRewardReached(RewardType.PIZZA)) {
             popupIsActive = true;
-            manager.addReward(RewardType.PIZZA);
-            RewardPopup popup = new RewardPopup(this);
-            popup.whistle(RewardType.PIZZA);
-            return;
-
+            new RewardPopup(this).whistle(RewardType.PIZZA);
         }
-        if (manager.getCakePairs().size() == manager.getCakeThreshold()) {
+        if (manager.isRewardReached(RewardType.CAKE)) {
             popupIsActive = true;
-            manager.addReward(RewardType.CAKE);
-            RewardPopup popup = new RewardPopup(this);
-            popup.whistle(RewardType.CAKE);
-            return;
+            new RewardPopup(this).whistle(RewardType.CAKE);
         }
     }
 
