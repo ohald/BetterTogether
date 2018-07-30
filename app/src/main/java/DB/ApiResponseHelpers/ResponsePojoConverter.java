@@ -66,14 +66,14 @@ public class ResponsePojoConverter {
     public static RewardResponse rewardToRewardResponse(Reward r){
         RewardResponse res = new RewardResponse();
         res.setDate(Long.toString(r.getDate().getTime()));
-        res.setRewardtype(r.getType() == RewardType.CAKE ? "cake" : "pizza");
-        res.setUsedeward(Boolean.toString(r.isUsedReward()));
+        res.setRewardType(r.getType().toString());
+        res.setUsedReward(Boolean.toString(r.isUsedReward()));
         return res;
     }
 
     public static ThresholdResponse thresholdToThresholdResponse(Threshold t){
         ThresholdResponse r = new ThresholdResponse();
-        r.setRewardtype(t.getType().toString());
+        r.setRewardType(t.getType().toString());
         r.setThreshold(t.getThreshold());
         return r;
     }

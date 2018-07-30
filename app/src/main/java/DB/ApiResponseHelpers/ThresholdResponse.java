@@ -15,7 +15,7 @@ import DB.RewardType;
 public class ThresholdResponse {
 
     @JsonProperty("reward_type")
-    private RewardType rewardtype;
+    private String rewardtype;
 
     @JsonProperty("threshold")
     private Integer threshold;
@@ -23,14 +23,12 @@ public class ThresholdResponse {
 
     @JsonProperty("reward_type")
     public RewardType getRewardtype() {
-        return rewardtype;
+        return RewardType.fromString(rewardtype);
     }
 
     @JsonProperty("reward_type")
-    public void setRewardtype(String rewardtype) {
-        if(rewardtype.toLowerCase().equals("cake"))
-            this.rewardtype = RewardType.CAKE;
-        else this.rewardtype = RewardType.PIZZA;
+    public void setRewardType(String rewardtype) {
+        this.rewardtype = rewardtype;
     }
 
     @JsonProperty("threshold")

@@ -35,21 +35,19 @@ public class RewardResponse {
 
     @JsonProperty("reward_type")
     public RewardType getRewardtype() {
-        return reward_type.toLowerCase().equals("cake") ? RewardType.CAKE : RewardType.PIZZA;
+        return RewardType.fromString(reward_type);
     }
 
     @JsonProperty("reward_type")
-    public void setRewardtype(String rewardtype) {
+    public void setRewardType(String rewardtype) {
         this.reward_type = rewardtype;
     }
 
     @JsonProperty("used_reward")
-    public boolean getUsedreward() {
-        return usedreward.equals("true") ? true : false;
-    }
+    public Boolean getUsedReward(){ return Boolean.parseBoolean(usedreward); }
 
     @JsonProperty("used_reward")
-    public void setUsedeward(String usedreward) {
+    public void setUsedReward(String usedreward) {
         this.usedreward = usedreward;
     }
 

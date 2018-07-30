@@ -46,9 +46,8 @@ public class PersonResponse {
 
 
     @JsonProperty("active")
-    public boolean getActive() {
-        if (active == null) return true;
-        return active.equals("false") ? false : true;
+    public Boolean getActive() {
+        return Boolean.parseBoolean(active);
     }
 
     @JsonProperty("active")

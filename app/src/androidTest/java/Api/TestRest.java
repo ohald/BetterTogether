@@ -160,9 +160,9 @@ public class TestRest {
         RewardResponse r = ResponsePojoConverter.rewardToRewardResponse(new Reward(new Date(), RewardType.PIZZA));
         RewardResponse res = rewardDao.addReward(r).execute().body().get(0);
 
-        assertEquals(res.getDate(), "10000");
-        assertEquals(res.getRewardtype(), RewardType.PIZZA);
-        assertEquals(res.getUsedreward(), false);
+        assertThat(res.getDate(), equalTo("10000"));
+        assertThat(res.getRewardtype(), equalTo(RewardType.PIZZA));
+        assertThat(res.getUsedReward(), equalTo(false));
     }
 
 
