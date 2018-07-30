@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,10 +31,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import DB.ApiClient;
-import DB.Dao.PersonDao;
 import DB.RewardType;
-import retrofit2.Retrofit;
 
 import com.BetterTogether.app.Pair;
 import com.BetterTogether.app.Person;

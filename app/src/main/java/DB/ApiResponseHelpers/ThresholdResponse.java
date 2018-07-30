@@ -21,7 +21,6 @@ public class ThresholdResponse {
     private Integer threshold;
 
     @JsonProperty("reward_type")
-
     public RewardType getRewardType() {
         return RewardType.fromString(reward_type);
     }

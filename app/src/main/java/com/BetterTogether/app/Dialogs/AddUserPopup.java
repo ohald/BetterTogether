@@ -98,41 +98,4 @@ public class AddUserPopup extends PopupView {
     public void setImageButton(Button image) {
         this.image = image;
     }
-
-
-    /*
-        manager.addUser(username.getText().
-
-    toString(),
-                name.getText().
-
-    toString(),lastName.
-
-    getText().
-
-    toString(),
-                ImageReader.bitmapToByte(
-                        ((BitmapDrawable)userImage.getDrawable()).
-
-    getBitmap()));
-
-}
-
-
-
-                if(person==null){
-                        manager.addUser(username.getText().toString(),
-                        name.getText().toString(),lastName.getText().toString(),
-                        ImageReader.bitmapToByte(
-                        ((BitmapDrawable)userImage.getDrawable()).getBitmap()));
-                        }else
-                        manager.editUser(person,name.getText().toString(),
-                        lastName.getText().toString(),
-                        ((BitmapDrawable)userImage.getDrawable()).getBitmap());
-                        //reset camera image
-                        userImage=null;
-                        });
-    */
-
-
 }

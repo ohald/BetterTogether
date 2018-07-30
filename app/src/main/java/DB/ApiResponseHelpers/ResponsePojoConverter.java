@@ -1,12 +1,9 @@
 package DB.ApiResponseHelpers;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import DB.RewardType;
 import com.BetterTogether.app.Pair;
 import com.BetterTogether.app.Person;
 import com.BetterTogether.app.Reward;
@@ -33,13 +30,6 @@ public class ResponsePojoConverter {
         return pairs;
     }
 
-    public static List<PairResponse> pairToPairResponse(List<Pair> responses){
-        List<PairResponse> pairs = new ArrayList<>();
-        for (Pair p : responses)
-            pairs.add(pairToPairResponse(p));
-        return pairs;
-    }
-
     public static List<Person> personResponseToPerson(List<PersonResponse> response) {
         List<Person> persons = new ArrayList<>();
         for (PersonResponse r : response)
@@ -57,10 +47,6 @@ public class ResponsePojoConverter {
         r.setUsername(p.getUsername());
         r.setName(p.getName());
         return r;
-    }
-
-    public static Reward rewardResponseToReward(RewardResponse r){
-        return new Reward(new Date(Long.parseLong(r.getDate())), r.getRewardType());
     }
 
     public static RewardResponse rewardToRewardResponse(Reward r){

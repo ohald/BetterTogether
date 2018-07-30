@@ -34,11 +34,4 @@ public interface RewardDao {
     @PUT("/api/threshold/update/{reward_type}")
     Call<List<ThresholdResponse>> setThreshold(@Body ThresholdResponse newThreshold);
 
-    //not in api
-
-    //int getEntries();
-    //Date getLastRewardDate(RewardType type);
-    //RewardType getLastRewardType();
-    //int getNumberOfRewards();
-
 }

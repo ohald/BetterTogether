@@ -30,6 +30,4 @@ public interface PersonDao {
     @PUT("/api/user/update")
     Call<PersonResponse> updatePerson(@Body PersonResponse person);
 
-    @DELETE("/api/user/delete/{username}")
-    Call<PersonResponse> deletePerson(PersonResponse person);
 }

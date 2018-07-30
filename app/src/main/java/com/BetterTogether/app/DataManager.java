@@ -18,7 +18,6 @@ import retrofit2.Retrofit;
 
 public class DataManager extends Observable {
 
-    private Retrofit apiClient;
     private PersonDao personDao;
     private PairDao pairDao;
     private RewardDao rewardDao;
@@ -45,7 +44,6 @@ public class DataManager extends Observable {
     }
 
     public DataManager(Retrofit apiClient) {
-        this.apiClient = apiClient;
         personDao = apiClient.create(PersonDao.class);
         pairDao = apiClient.create(PairDao.class);
         rewardDao = apiClient.create(RewardDao.class);
@@ -122,25 +120,6 @@ public class DataManager extends Observable {
         );
 
     }
-
-    public void setNewThresholdValue(Threshold t){
-        rewardDao.setThreshold(ResponsePojoConverter.thresholdToThresholdResponse(t)).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if(response.body().size() == 0) {
-                        throwable.printStackTrace();
-                        return;
-                    }
-
-                    if(response.body().get(0).getRewardType() == RewardType.PIZZA)
-                        pizzaThreshold = response.body().get(0).getThreshold();
-                    else
-                        cakeThreshold = response.body().get(0).getThreshold();
-                    setChanged();
-                    notifyObservers();
-                })
-        );
-    }
-
 
 
     private void updateThresholds() {

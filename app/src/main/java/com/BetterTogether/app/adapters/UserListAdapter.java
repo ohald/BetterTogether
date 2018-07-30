@@ -8,9 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.BetterTogether.app.R;
-
 import java.util.List;
 
 import com.BetterTogether.app.Person;

@@ -202,6 +202,4 @@ public class TestParse {
         assertThat(pairDao.getHistory().execute().body().size(), equalTo(1));
     }
 
-
-
 }
