@@ -49,18 +49,18 @@ public class UserListAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup parent) {
         View cellView = inflater.inflate(R.layout.user_list_element, parent, false);
         //set images to corresponding users
-        byte[] image = dataSet.get(position).getImage();
+        String image = dataSet.get(position).getImage();
         ImageView imageView = cellView.findViewById(R.id.profile_image);
         Bitmap bitmap;
 
-        //TODO:find permanent solution -- remove null check.
-        if(image == null){
+
+        if(image.equalsIgnoreCase("unknown")){
             bitmap = ImageReader.imageToBitmap(cellView.getContext(), "unknown");
         } else {
-            bitmap = ImageReader.byteArrayToBitmap(image);
+            bitmap = ImageReader.base64ToScaledBitmap(image);
         }
-
         imageView.setImageBitmap(bitmap);
+
 
         TextView name = cellView.findViewById(R.id.username);
 

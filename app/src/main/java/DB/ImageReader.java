@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,27 +25,16 @@ public class ImageReader {
         }
     }
 
-    public static byte[] bitmapToByte(Bitmap bitmap) {
-        try {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] image = stream.toByteArray();
-            stream.close();
-            return image;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static Bitmap base64ToScaledBitmap(String image){
+        return byteArrayToScaledBitmap(Base64.decode(image, Base64.DEFAULT));
     }
 
-    public static byte[] imageToByte(Context c, String imgname) {
-        return bitmapToByte(imageToBitmap(c, imgname));
-    }
-
-    public static Bitmap byteArrayToBitmap(byte[] image) {
+    public static Bitmap byteArrayToScaledBitmap(byte[] image) {
         //turn byte[] to bitmap
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
+        Bitmap b = BitmapFactory.decodeByteArray(image, 0, image.length);
+        Bitmap scaled = Bitmap.createScaledBitmap(b, 100, 100, false);
+        b.recycle();
+        return scaled;
     }
-
 
 }

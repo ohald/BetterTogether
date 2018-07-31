@@ -37,9 +37,8 @@ public class ResponsePojoConverter {
         return persons;
     }
 
-    public static Person personResponseToPerson(PersonResponse r) {
-        //TODO: need solution for images from slack.
-        return new Person(r.getUsername(), r.getName(),null, r.getActive());
+    private static Person personResponseToPerson(PersonResponse r) {
+        return new Person(r.getUsername(), r.getName(), r.getImage());
     }
 
     public static RewardResponse rewardToRewardResponse(Reward r){

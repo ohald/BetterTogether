@@ -8,17 +8,13 @@ public class Person {
     private String name;
     private boolean active;
 
-    private byte[] image;
+    private String image;
 
-    public Person(String username, String name) {
-        this(username, name, null, true);
-    }
-
-    public Person(String username, String name, byte[] image) {
+    public Person(String username, String name, String image) {
         this(username, name,  image, true);
     }
 
-    public Person(String username, String name, byte[] image, boolean active) {
+    public Person(String username, String name, String image, boolean active) {
         this.username = username.toLowerCase();
         this.name = name;
         this.image = image;
@@ -38,11 +34,11 @@ public class Person {
         this.name = name;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
