@@ -6,19 +6,12 @@ public class Person {
 
     private String username;
     private String name;
-    private boolean active;
-
     private String image;
 
     public Person(String username, String name, String image) {
-        this(username, name,  image, true);
-    }
-
-    public Person(String username, String name, String image, boolean active) {
         this.username = username.toLowerCase();
         this.name = name;
         this.image = image;
-        this.active = active;
     }
 
     public String getUsername() {
