@@ -154,36 +154,16 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
     }
 
-    @SuppressLint("SetTextI18n")
     private void writeStatus() {
         if (!popupIsActive) {
             createRewardPopupIfReachedReward();
         }
 
-        TextView numPairs = getView().findViewById(R.id.num_of_pairs);
-
-        TextView pizzaCount = getView().findViewById(R.id.pizza_text);
-        TextView cakeCount = getView().findViewById(R.id.cake_text);
-
-        TextView pizzaClaim = getView().findViewById(R.id.pizza_iou);
-        TextView cakeClaim = getView().findViewById(R.id.cake_iou);
-
-        numPairs.setText(Integer.toString(manager.getAllPairs().size()));
-
-        pizzaCount.setText(Integer.toString(manager.getPizzaPairs().size()) + "/" +
-                Integer.toString(manager.getPizzaThreshold()));
-        cakeCount.setText(Integer.toString(manager.getCakePairs().size()) + "/" +
-                Integer.toString(manager.getCakeThreshold()));
-
-        pizzaClaim.setText(Integer.toString(manager.getUnusedPizza()));
-        cakeClaim.setText(Integer.toString(manager.getUnusedCake()));
-
-        if (manager.getAllPairs().isEmpty()) {
-            return;
+        if (!manager.getAllPairs().isEmpty()) {
+            TextView lastPair = getView().findViewById(R.id.last_event);
+            lastPair.setText(manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson1() +
+                    " & " + manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson2());
         }
-        TextView lastPair = getView().findViewById(R.id.last_event);
-        lastPair.setText(manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson1() +
-                " & " + manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson2());
     }
 
     private void resetSelectedPersons() {

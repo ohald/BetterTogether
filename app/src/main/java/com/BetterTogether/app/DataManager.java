@@ -212,22 +212,6 @@ public class DataManager {
         return allPairs;
     }
 
-    public List<Pair> getPizzaPairs() {
-        return pizzaPairs;
-    }
-
-    public List<Pair> getCakePairs() {
-        return cakePairs;
-    }
-
-    public int getCakeThreshold() {
-        return cakeThreshold;
-    }
-
-    public int getPizzaThreshold() {
-        return pizzaThreshold;
-    }
-
     public int getUnusedCake() {
         return unusedCake;
     }
