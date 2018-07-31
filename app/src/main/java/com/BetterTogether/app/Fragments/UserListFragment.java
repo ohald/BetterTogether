@@ -22,14 +22,12 @@ import com.BetterTogether.app.Dialogs.RewardPopup;
 import com.BetterTogether.app.DataManager;
 import com.BetterTogether.app.Dialogs.TokenPopup;
 import com.BetterTogether.app.R;
-import com.BetterTogether.app.TokenListener;
+import com.BetterTogether.app.DataUpdateListener;
 import com.BetterTogether.app.adapters.UserListAdapter;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import DB.RewardType;
 
@@ -39,7 +37,7 @@ import com.BetterTogether.app.Person;
 import static android.app.Activity.RESULT_OK;
 
 
-public class UserListFragment extends Fragment implements Observer, TokenListener {
+public class UserListFragment extends Fragment implements DataUpdateListener {
         private ArrayList<Integer> selectedItems;
 
     private DataManager manager;
@@ -113,10 +111,10 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
     }
 
 
-    void setUpGridView(List<Person> persons) {
-        List<Person> activeUsers = manager.getActiveUsers();
+    void setUpGridView() {
+        List<Person> persons = manager.getActiveUsers();
 
-        UserListAdapter adapter = new UserListAdapter(getContext(), activeUsers);
+        UserListAdapter adapter = new UserListAdapter(getContext(), persons);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener((adapterView, view, position, l) ->
                 selectItemAtPosition(position));
@@ -260,12 +258,8 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
         return manager;
     }
 
-    @Override
-    public void update(Observable observable, Object o) {
-        setUpGridView(manager.getActiveUsers());
-        writeStatus();
 
-    }
+
 
     private void openCameraActivity() {
         Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -287,9 +281,18 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
     }
 
     @Override
+    public void updateGrid() {
+        setUpGridView();
+    }
+
+    @Override
+    public void updateStatus() {
+        writeStatus();
+    }
+
+    @Override
     public void tokenReceived(String token) {
         manager = new DataManager(token, this);
-        manager.addObserver(this);
     }
 
     private void askForToken(boolean rejected){
