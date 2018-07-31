@@ -158,12 +158,6 @@
             android:layout_height="wrap_content"
             android:text="@string/reset_selection" />
 
-        <Button
-            android:id="@+id/add_user"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="@string/add_user" />
-
     </LinearLayout>
 
 </RelativeLayout>

@@ -1,11 +1,8 @@
 package com.BetterTogether.app.Fragments;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,7 +13,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.BetterTogether.app.Dialogs.AddUserPopup;
 import com.BetterTogether.app.Dialogs.RewardPopup;
 
 import com.BetterTogether.app.DataManager;
@@ -34,8 +30,6 @@ import DB.RewardType;
 import com.BetterTogether.app.Pair;
 import com.BetterTogether.app.Person;
 
-import static android.app.Activity.RESULT_OK;
-
 
 public class UserListFragment extends Fragment implements DataUpdateListener {
         private ArrayList<Integer> selectedItems;
@@ -43,8 +37,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     private DataManager manager;
 
     private GridView gridView;
-
-    private AddUserPopup addUserPopup;
 
     private boolean popupIsActive;
 
@@ -65,9 +57,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
-
-        Button addUser = getView().findViewById(R.id.add_user);
-        addUser.setOnClickListener(view_user -> createOrEditUser(null));
 
         Button okBtn = getView().findViewById(R.id.create_pair_button);
         okBtn.setOnClickListener(btn -> createPair());
@@ -119,8 +108,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         gridView.setOnItemClickListener((adapterView, view, position, l) ->
                 selectItemAtPosition(position));
 
-        gridView.setOnItemLongClickListener(((adapterView, view, position, l) ->
-                createOrEditUser(persons.get(position))));
 
         disableScrolling();
     }
@@ -133,55 +120,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         gridView.setVerticalScrollBarEnabled(false);
     }
 
-    private boolean createOrEditUser(Person person) {
-        addUserPopup = new AddUserPopup(this);
-        Button add = addUserPopup.getView().findViewById(R.id.add);
-        Button image = addUserPopup.getView().findViewById(R.id.image);
-        image.setOnClickListener(btn -> openCameraActivity());
-        addUserPopup.setImageButton(image);
-        if (person == null) {
-            createUser(add);
-        } else {
-            editUser(add, person);
-        }
-        return true;
-    }
-
-    private void createUser(Button add) {
-        add.setOnClickListener(btn -> {
-            if (!isValidInput(addUserPopup.getPerson()))
-                return;
-            manager.addUser(addUserPopup.getPerson());
-            addUserPopup.closeDialog();
-            Toast.makeText(getContext(), addUserPopup.getPerson().getUsername() + " added", Toast.LENGTH_SHORT).show();
-        });
-        addUserPopup.setAddButton(add);
-        addUserPopup.openCreateDialog();
-    }
-
-    private void editUser(Button add, Person person) {
-        add.setOnClickListener(btn -> {
-            if (!isValidInput(addUserPopup.getPerson()))
-                return;
-            manager.editUser(addUserPopup.getPerson());
-            addUserPopup.closeDialog();
-            Toast.makeText(getContext(), addUserPopup.getPerson().getUsername() + " edited", Toast.LENGTH_SHORT).show();
-        });
-        addUserPopup.setAddButton(add);
-        addUserPopup.openEditDialog(person);
-    }
-
-    private boolean isValidInput(Person person) {
-        if (manager.getAllUsers().contains(person)) {
-            Toast.makeText(getContext(), "Username already taken", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (person.getUsername().equals("") || person.getName().equals("")) {
-            Toast.makeText(getContext(), "You need to fill in all fields", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
-    }
 
     @SuppressLint("CheckResult")
     private void createPair() {
@@ -259,22 +197,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     }
 
 
-
-
-    private void openCameraActivity() {
-        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (camera.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivityForResult(camera, 1);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            setCameraResult(data);
-        }
-    }
-
     @Override
     public void tokenRejected(){
         askForToken(true);
@@ -305,9 +227,4 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         new TokenPopup(this).setUpGetTokenView(message);
     }
 
-    private void setCameraResult(Intent data){
-        Bundle extras = data.getExtras();
-        Bitmap imageBitmap = (Bitmap) extras.get("data");
-        addUserPopup.setUserImage(imageBitmap);
-    }
 }

@@ -189,29 +189,6 @@ public class DataManager {
                 }));
     }
 
-    public void addUser(String userName, String name, byte[] img) {
-        Person newUser = new Person(userName, name, img, true);
-
-        if (!allUsers.contains(newUser))
-            personDao.insertPerson(ResponsePojoConverter.personToPersonResponse(newUser)).enqueue(
-                    new CallbackWrapper<>((throwable, response) -> {
-                        updateActiveUsers();
-
-                    }));
-
-    }
-
-    public void addUser(Person person) {
-        addUser(person.getUsername(), person.getName(), person.getImage());
-    }
-
-    public void editUser(Person person) {
-        personDao.updatePerson(ResponsePojoConverter.personToPersonResponse(person)).enqueue(
-                new CallbackWrapper<>((throwable, response) ->
-                        updateActiveUsers()
-                ));
-    }
-
 
     public void addPair(Pair pair) {
         pairDao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
@@ -230,9 +207,6 @@ public class DataManager {
 
     }
 
-    public List<Person> getAllUsers() {
-        return allUsers;
-    }
 
     public List<Pair> getAllPairs() {
         return allPairs;

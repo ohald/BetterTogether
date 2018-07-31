@@ -24,10 +24,4 @@ public interface PersonDao {
     @GET("/api/user/active")
     Call<List<PersonResponse>> getAllActivePersons();
 
-    @POST("/api/user/add")
-    Call<PersonResponse> insertPerson(@Body PersonResponse person);
-
-    @PUT("/api/user/update")
-    Call<PersonResponse> updatePerson(@Body PersonResponse person);
-
 }

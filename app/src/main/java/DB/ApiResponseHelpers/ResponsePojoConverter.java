@@ -42,13 +42,6 @@ public class ResponsePojoConverter {
         return new Person(r.getUsername(), r.getName(),null, r.getActive());
     }
 
-    public static PersonResponse personToPersonResponse(Person p) {
-        PersonResponse r = new PersonResponse();
-        r.setUsername(p.getUsername());
-        r.setName(p.getName());
-        return r;
-    }
-
     public static RewardResponse rewardToRewardResponse(Reward r){
         RewardResponse res = new RewardResponse();
         res.setDate(Long.toString(r.getDate().getTime()));
