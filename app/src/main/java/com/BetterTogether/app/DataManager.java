@@ -2,7 +2,6 @@ package com.BetterTogether.app;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import DB.ApiClient;
@@ -176,9 +175,11 @@ public class DataManager {
     }
 
 
-    public void addReward(RewardType type) {
+    private void addReward(RewardType type) {
+        long unixTimestamp = System.currentTimeMillis();
+
         RewardResponse res = ResponsePojoConverter.rewardToRewardResponse(
-                new Reward(new Date(), type));
+                new Reward(Long.toString(unixTimestamp), type));
 
         rewardDao.addReward(res).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {

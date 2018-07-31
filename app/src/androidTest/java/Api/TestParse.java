@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import DB.Dao.PairDao;
@@ -156,7 +155,10 @@ public class TestParse {
     @Test
     public void canParseRewardResponse() throws IOException{
         addRewardResponse();
-        RewardResponse r = ResponsePojoConverter.rewardToRewardResponse(new Reward(new Date(), RewardType.PIZZA));
+        RewardResponse r = ResponsePojoConverter.rewardToRewardResponse(
+                new Reward(
+                        Long.toString(System.currentTimeMillis()/1000),
+                        RewardType.PIZZA));
         RewardResponse res = rewardDao.addReward(r).execute().body().get(0);
 
         assertThat(res.getDate(), equalTo("10000"));
@@ -179,7 +181,7 @@ public class TestParse {
     public void canParseListOfPeople() throws IOException{
         addUserListResponse();
 
-        List<PersonResponse> response = personDao.getAllPersons().execute().body();
+        List<PersonResponse> response = personDao.getAllActivePersons().execute().body();
         assertThat(response.size(), equalTo(1));
     }
 
@@ -187,13 +189,13 @@ public class TestParse {
     @Test
     public void canParsePairResponse() throws IOException{
         addPairResponse();
-        Pair p = new Pair("esog", "ohald", new Date(10000000));
-        PairResponse p1 = pairDao.insertPair(
+        Pair p = new Pair("esog", "ohald", "10000000");
+        PairResponse r = pairDao.insertPair(
                 ResponsePojoConverter.pairToPairResponse(p)).execute().body();
 
-        assertThat(p1.getDate(), equalTo(Long.toString(p.getDate().getTime())));
-        assertThat(p1.getPerson1(), equalTo(p.getPerson1()));
-        assertThat(p1.getPerson2(), equalTo(p.getPerson2()));
+        assertThat(r.getDate(), equalTo(p.getDate()));
+        assertThat(r.getPerson1(), equalTo(p.getPerson1()));
+        assertThat(r.getPerson2(), equalTo(p.getPerson2()));
     }
 
     @Test

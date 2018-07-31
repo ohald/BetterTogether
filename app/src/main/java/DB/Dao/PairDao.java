@@ -1,6 +1,5 @@
 package DB.Dao;
 
-import java.util.Date;
 import java.util.List;
 
 import DB.RewardType;

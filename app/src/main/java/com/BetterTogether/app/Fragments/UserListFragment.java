@@ -22,7 +22,6 @@ import com.BetterTogether.app.DataUpdateListener;
 import com.BetterTogether.app.adapters.UserListAdapter;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import DB.RewardType;
@@ -128,7 +127,10 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        Pair pair = new Pair(new Date());
+
+        long unixTimestamp = System.currentTimeMillis();
+        Pair pair = new Pair(Long.toString(unixTimestamp));
+
         pair.setPerson1(manager.getActiveUsers().get(selectedItems.get(0)).getUsername());
         pair.setPerson2(manager.getActiveUsers().get(selectedItems.get(1)).getUsername());
         manager.addPair(pair);
