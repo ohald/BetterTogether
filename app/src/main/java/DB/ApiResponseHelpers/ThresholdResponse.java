@@ -40,11 +40,4 @@ public class ThresholdResponse {
         this.threshold = threshold;
     }
 
-    @Override
-    public String toString() {
-        return "ParsedThreshold{" +
-                "reward_type='" + reward_type + '\'' +
-                ", threshold=" + threshold +
-                '}';
-    }
 }
