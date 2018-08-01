@@ -15,22 +15,19 @@ import DB.RewardType;
 public class ThresholdResponse {
 
     @JsonProperty("reward_type")
-    private RewardType rewardtype;
+    private String reward_type;
 
     @JsonProperty("threshold")
     private Integer threshold;
 
-
     @JsonProperty("reward_type")
-    public RewardType getRewardtype() {
-        return rewardtype;
+    public RewardType getRewardType() {
+        return RewardType.fromString(reward_type);
     }
 
     @JsonProperty("reward_type")
-    public void setRewardtype(String rewardtype) {
-        if(rewardtype.toLowerCase().equals("cake"))
-            this.rewardtype = RewardType.CAKE;
-        else this.rewardtype = RewardType.PIZZA;
+    public void setRewardType(String reward_type) {
+        this.reward_type = reward_type;
     }
 
     @JsonProperty("threshold")
@@ -43,11 +40,4 @@ public class ThresholdResponse {
         this.threshold = threshold;
     }
 
-    @Override
-    public String toString() {
-        return "ParsedThreshold{" +
-                "reward_type='" + rewardtype + '\'' +
-                ", threshold=" + threshold +
-                '}';
-    }
 }

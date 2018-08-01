@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+        "username",
         "name",
-        "lastname",
         "image",
         "active"
 })
@@ -40,15 +40,14 @@ public class PersonResponse {
     }
 
     @JsonProperty("name")
-    public void setName(String firstname) {
-        this.name = firstname;
+    public void setName(String name) {
+        this.name = name;
     }
 
 
     @JsonProperty("active")
-    public boolean getActive() {
-        if (active == null) return true;
-        return active.equals("false") ? false : true;
+    public Boolean getActive() {
+        return Boolean.parseBoolean(active);
     }
 
     @JsonProperty("active")
@@ -64,14 +63,6 @@ public class PersonResponse {
     @JsonProperty("image")
     public void setImage(String image) {
         this.image = image;
-    }
-
-    @Override
-    public String toString() {
-        return "JSONReader{" +
-                "username='" + username + '\'' +
-                ", name='" + name + '\'' +
-                '}';
     }
 
 }

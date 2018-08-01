@@ -1,9 +1,8 @@
 package com.BetterTogether.app;
 
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Observable;
 
 import DB.ApiClient;
 import DB.CallbackWrapper;
@@ -16,19 +15,14 @@ import DB.ApiResponseHelpers.ResponsePojoConverter;
 import DB.ApiResponseHelpers.RewardResponse;
 import retrofit2.Retrofit;
 
-public class DataManager extends Observable {
+public class DataManager {
 
-    private Retrofit apiClient;
     private PersonDao personDao;
     private PairDao pairDao;
     private RewardDao rewardDao;
 
-
-    private List<Person> allUsers;
-    private List<Person> activeUsers;
-
     private List<Pair> allPairs;
-
+    private List<Person> activeUsers;
     private List<Pair> pizzaPairs;
     private List<Pair> cakePairs;
     private int cakeThreshold;
@@ -37,18 +31,15 @@ public class DataManager extends Observable {
     private int unusedCake;
     private int unusedPizza;
 
-    private TokenListener tokenListener;
+    private DataUpdateListener listener;
 
-    public DataManager(String token, TokenListener listener) {
-        this(ApiClient.getRetrofitInstance(token));
-        this.tokenListener = listener;
-    }
-
-    public DataManager(Retrofit apiClient) {
-        this.apiClient = apiClient;
+    public DataManager(String token, DataUpdateListener listener) {
+        Retrofit apiClient = ApiClient.getRetrofitInstance(token);
         personDao = apiClient.create(PersonDao.class);
         pairDao = apiClient.create(PairDao.class);
         rewardDao = apiClient.create(RewardDao.class);
+
+        this.listener = listener;
 
         cakeThreshold = 10000;
         pizzaThreshold = 10000;
@@ -57,17 +48,16 @@ public class DataManager extends Observable {
         pizzaPairs = new ArrayList<>();
         cakePairs = new ArrayList<>();
         allPairs = new ArrayList<>();
-        allUsers = new ArrayList<>();
         activeUsers = new ArrayList<>();
 
         validateToken();
 
     }
 
-    private void validateToken(){
+    private void validateToken() {
         rewardDao.getThreshold(RewardType.PIZZA).enqueue(new CallbackWrapper<>((throwable, response) -> {
             if (response.code() == 403) {
-                tokenListener.tokenRejected();
+                listener.tokenRejected();
             } else if (response.code() == 200) {
                 initializeData();
             } else {
@@ -77,11 +67,22 @@ public class DataManager extends Observable {
 
     }
 
-    private void initializeData(){
+    public boolean isRewardReached(RewardType type) {
+        if (pizzaPairs.size() >= pizzaThreshold && type == RewardType.PIZZA) {
+            addReward(RewardType.PIZZA);
+            return true;
+        }
+        if (cakePairs.size() >= cakeThreshold && type == RewardType.CAKE) {
+            addReward(RewardType.CAKE);
+            return true;
+        }
+        return false;
+    }
+
+    private void initializeData() {
         updatePairs();
         updateThresholds();
         updateUnusedRewards();
-        updateAllUsers();
         updateActiveUsers();
     }
 
@@ -89,57 +90,40 @@ public class DataManager extends Observable {
         pairDao.getHistory().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     this.allPairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                    setChanged();
-                    notifyObservers();
+                    listener.updateStatus();
                 }));
 
         pairDao.getPairsSinceLastReward(RewardType.PIZZA).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     this.pizzaPairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                    setChanged();
-                    notifyObservers();
+                    listener.updateStatus();
+
                 })
         );
 
         pairDao.getPairsSinceLastReward(RewardType.CAKE).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     this.cakePairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                    setChanged();
-                    notifyObservers();
+                    listener.updateStatus();
+
                 })
         );
 
     }
-
-    public void setNewThresholdValue(Threshold t){
-        rewardDao.setThreshold(ResponsePojoConverter.thresholdToThresholdResponse(t)).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if(response.body().size() == 0) {
-                        throwable.printStackTrace();
-                        return;
-                    }
-
-                    if(response.body().get(0).getRewardtype() == RewardType.PIZZA)
-                        pizzaThreshold = response.body().get(0).getThreshold();
-                    else
-                        cakeThreshold = response.body().get(0).getThreshold();
-                    setChanged();
-                    notifyObservers();
-                })
-        );
-    }
-
 
 
     private void updateThresholds() {
         rewardDao.getThreshold(RewardType.PIZZA).enqueue(
-                new CallbackWrapper<>((throwable, response) ->
-                    this.pizzaThreshold = response.body().get(0).getThreshold()
-                ));
+                new CallbackWrapper<>((throwable, response) -> {
+                    this.pizzaThreshold = response.body().get(0).getThreshold();
+                    listener.updateStatus();
+
+                }));
         rewardDao.getThreshold(RewardType.CAKE).enqueue(
-                new CallbackWrapper<>((throwable, response) ->
-                this.cakeThreshold = response.body().get(0).getThreshold())
-        );
+                new CallbackWrapper<>((throwable, response) -> {
+                    this.cakeThreshold = response.body().get(0).getThreshold();
+                    listener.updateStatus();
+                }));
     }
 
 
@@ -147,15 +131,14 @@ public class DataManager extends Observable {
         rewardDao.numberOfUnusedRewards(RewardType.PIZZA).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     this.unusedPizza = response.body();
-                    setChanged();
-                    notifyObservers();
+                    listener.updateStatus();
+
                 })
         );
         rewardDao.numberOfUnusedRewards(RewardType.CAKE).enqueue(
-                new CallbackWrapper<>((throwable, response)-> {
+                new CallbackWrapper<>((throwable, response) -> {
                     this.unusedCake = response.body();
-                    setChanged();
-                    notifyObservers();
+                    listener.updateStatus();
                 })
         );
     }
@@ -163,64 +146,29 @@ public class DataManager extends Observable {
     private void updateActiveUsers() {
         personDao.getAllActivePersons().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    if(response.body() == null){
+                    if (response.body() == null) {
                         throwable.printStackTrace();
                         return;
                     }
                     activeUsers = ResponsePojoConverter.personResponseToPerson(response.body());
-                    setChanged();
-                    notifyObservers();
+                    listener.updateGrid();
                 }));
     }
 
 
-    private void updateAllUsers() {
-        personDao.getAllPersons().enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    allUsers = ResponsePojoConverter.personResponseToPerson(response.body());
-                    setChanged();
-                    notifyObservers();
-                })
-        );
+    private void addReward(RewardType type) {
+        long unixTimestamp = System.currentTimeMillis();
 
-    }
-
-
-    public void addReward(RewardType type) {
         RewardResponse res = ResponsePojoConverter.rewardToRewardResponse(
-                new Reward(new Date(), type));
+                new Reward(Long.toString(unixTimestamp), type));
 
         rewardDao.addReward(res).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     updatePairs();
                     updateUnusedRewards();
-                    setChanged();
-                    notifyObservers();
+                    listener.updateStatus();
 
-        }));
-    }
-
-    public void addUser(String userName, String name, byte[] img) {
-        Person newUser = new Person(userName, name, img, true);
-
-        if (!allUsers.contains(newUser))
-            personDao.insertPerson(ResponsePojoConverter.personToPersonResponse(newUser)).enqueue(
-                    new CallbackWrapper<>((throwable, response) -> {
-                        updateActiveUsers();
-
-                    }));
-
-    }
-
-    public void addUser(Person person) {
-        addUser(person.getUsername(), person.getName(), person.getImage());
-    }
-
-    public void editUser(Person person) {
-        personDao.updatePerson(ResponsePojoConverter.personToPersonResponse(person)).enqueue(
-                new CallbackWrapper<>((throwable, response) ->
-                        updateActiveUsers()
-                ));
+                }));
     }
 
 
@@ -234,35 +182,16 @@ public class DataManager extends Observable {
 
     public void setUseVariableToTrue(RewardType rewardType) {
         rewardDao.updateReward(rewardType.toString()).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    updateUnusedRewards();
-                })
+                new CallbackWrapper<>((throwable, response) ->
+                    updateUnusedRewards()
+                )
         );
 
     }
 
-    public List<Person> getAllUsers() {
-        return allUsers;
-    }
 
     public List<Pair> getAllPairs() {
         return allPairs;
-    }
-
-    public List<Pair> getPizzaPairs() {
-        return pizzaPairs;
-    }
-
-    public List<Pair> getCakePairs() {
-        return cakePairs;
-    }
-
-    public int getCakeThreshold() {
-        return cakeThreshold;
-    }
-
-    public int getPizzaThreshold() {
-        return pizzaThreshold;
     }
 
     public int getUnusedCake() {

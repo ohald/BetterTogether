@@ -22,9 +22,6 @@ public class RewardPopup extends PopupView {
         View popup = layoutInflater.inflate(R.layout.reward_popup_layout, null);
         alertBuilder.setView(popup);
 
-        //MediaPlayer cakeSound = MediaPlayer.create(RewardPopup.this, R.raw.cake_sound);
-        //cakeSound.start();
-
         if (rewardType == RewardType.CAKE) {
             alertBuilder.setTitle("IT IS CAKE TIME!!");
             popup.setBackgroundResource(R.drawable.cake_picture);

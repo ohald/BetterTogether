@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import DB.Dao.PairDao;
@@ -33,13 +32,12 @@ import okhttp3.mockwebserver.MockWebServer;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
-public class TestRest {
+public class TestParse {
 
     private PersonDao personDao;
     private PairDao pairDao;
@@ -136,38 +134,41 @@ public class TestRest {
     }
 
     @Test
-    public void canReadSingleNumberResponse() throws IOException {
+    public void canParseSingleNumberResponse() throws IOException {
         addNumberResponse();
         Integer i = rewardDao.numberOfUnusedRewards(RewardType.PIZZA).execute().body();
         assertThat(i, equalTo(1));
     }
 
     @Test
-    public void canReadThresholdResponse() throws IOException {
+    public void canParseThresholdResponse() throws IOException {
         addThresholdResponse();
         ThresholdResponse r = rewardDao.setThreshold
                 (ResponsePojoConverter.thresholdToThresholdResponse
                         (new Threshold(RewardType.PIZZA, 50))).execute().body().get(0);
 
-        assertThat(r.getRewardtype(), equalTo(RewardType.PIZZA));
+        assertThat(r.getRewardType(), equalTo(RewardType.PIZZA));
         assertThat(r.getThreshold(), equalTo(50));
     }
 
 
     @Test
-    public void canReadRewardResponse() throws IOException{
+    public void canParseRewardResponse() throws IOException{
         addRewardResponse();
-        RewardResponse r = ResponsePojoConverter.rewardToRewardResponse(new Reward(new Date(), RewardType.PIZZA));
+        RewardResponse r = ResponsePojoConverter.rewardToRewardResponse(
+                new Reward(
+                        Long.toString(System.currentTimeMillis()/1000),
+                        RewardType.PIZZA));
         RewardResponse res = rewardDao.addReward(r).execute().body().get(0);
 
-        assertEquals(res.getDate(), "10000");
-        assertEquals(res.getRewardtype(), RewardType.PIZZA);
-        assertEquals(res.getUsedreward(), false);
+        assertThat(res.getDate(), equalTo("10000"));
+        assertThat(res.getRewardType(), equalTo(RewardType.PIZZA));
+        assertThat(res.getUsedReward(), equalTo(false));
     }
 
 
     @Test
-    public void getPersonFromApiGivesPersonWithSameFields() throws IOException {
+    public void canParsePersonResponse() throws IOException {
         addUserResponse();
         PersonResponse p = personDao.getPerson("ohald").execute().body();
 
@@ -177,32 +178,30 @@ public class TestRest {
     }
 
     @Test
-    public void getListOfPersonsWithOnePersonResponseFromApiGivesListOfPersonsWithSizeOne() throws IOException{
+    public void canParseListOfPeople() throws IOException{
         addUserListResponse();
 
-        List<PersonResponse> response = personDao.getAllPersons().execute().body();
+        List<PersonResponse> response = personDao.getAllActivePersons().execute().body();
         assertThat(response.size(), equalTo(1));
     }
 
 
     @Test
-    public void addPairToApiReturnsPairResponse() throws IOException{
+    public void canParsePairResponse() throws IOException{
         addPairResponse();
-        Pair p = new Pair("esog", "ohald", new Date(10000000));
-        PairResponse p1 = pairDao.insertPair(
+        Pair p = new Pair("esog", "ohald", "10000000");
+        PairResponse r = pairDao.insertPair(
                 ResponsePojoConverter.pairToPairResponse(p)).execute().body();
 
-        assertThat(p1.getDate(), equalTo(Long.toString(p.getDate().getTime())));
-        assertThat(p1.getPerson1(), equalTo(p.getPerson1()));
-        assertThat(p1.getPerson2(), equalTo(p.getPerson2()));
+        assertThat(r.getDate(), equalTo(p.getDate()));
+        assertThat(r.getPerson1(), equalTo(p.getPerson1()));
+        assertThat(r.getPerson2(), equalTo(p.getPerson2()));
     }
 
     @Test
-    public void getAllPairsWithOnePairResponseReturnsListOfPairsWithLengthOne() throws IOException{
+    public void canParseListOfPairs() throws IOException{
         addPairListResponse();
         assertThat(pairDao.getHistory().execute().body().size(), equalTo(1));
     }
-
-
 
 }

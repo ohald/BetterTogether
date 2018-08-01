@@ -6,32 +6,12 @@ public class Person {
 
     private String username;
     private String name;
-    private boolean active;
+    private String image;
 
-    private byte[] image;
-
-    public Person(String username, String name) {
-        this(username, name, null, true);
-    }
-
-    public Person(String username, String name, byte[] image) {
-        this(username, name,  image, true);
-    }
-
-    public Person(String username, String name, byte[] image, boolean active) {
+    public Person(String username, String name, String image) {
         this.username = username.toLowerCase();
         this.name = name;
         this.image = image;
-        this.active = active;
-    }
-
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public String getUsername() {
@@ -47,11 +27,11 @@ public class Person {
         this.name = name;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

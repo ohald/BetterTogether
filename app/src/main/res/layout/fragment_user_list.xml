@@ -3,142 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/pizza_progress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:text="@string/pizza_beer"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/pizza_text"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="15sp" />
-
-        <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:text="@string/claimable"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/pizza_iou"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="15sp" />
-
-        <Button
-            android:id="@+id/reset_pizza"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="@string/claim_pizza" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/cake_progress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/pizza_progress"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:text="@string/cake"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/cake_text"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="15sp" />
-
-        <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:text="@string/claimable"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/cake_iou"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="15sp" />
-
-        <Button
-            android:id="@+id/reset_cake"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="@string/claim_cake" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/total_ppm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/cake_progress"
-        android:layout_marginBottom="5dp"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:text="@string/ppm_num"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/num_of_pairs"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="15sp" />
-
-        <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:text="@string/last_ppm_event"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/last_event"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="15sp" />
-
-    </LinearLayout>
-
-
     <GridView
         android:id="@+id/user_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/total_ppm"
-        android:layout_above="@+id/pair_buttons"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_above="@+id/buttons"
+        android:layout_below="@id/prev_event"
         android:columnWidth="100dp"
         android:verticalSpacing="10dp"
         android:horizontalSpacing="10dp"
         android:stretchMode="columnWidth"
-        android:numColumns="auto_fit" />
+        android:numColumns="auto_fit"
+        />
 
     <LinearLayout
-        android:id="@+id/pair_buttons"
+        android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -159,11 +42,41 @@
             android:text="@string/reset_selection" />
 
         <Button
-            android:id="@+id/add_user"
+            android:id="@+id/reset_pizza"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/add_user" />
+            android:text="@string/claim_pizza" />
+
+        <Button
+            android:id="@+id/reset_cake"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="@string/claim_cake" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/prev_event"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:text="@string/last_ppm_event"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/last_event"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
 
 </RelativeLayout>

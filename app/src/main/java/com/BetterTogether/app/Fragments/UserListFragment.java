@@ -1,13 +1,9 @@
 package com.BetterTogether.app.Fragments;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,40 +13,29 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.BetterTogether.app.Dialogs.AddUserPopup;
 import com.BetterTogether.app.Dialogs.RewardPopup;
 
 import com.BetterTogether.app.DataManager;
 import com.BetterTogether.app.Dialogs.TokenPopup;
 import com.BetterTogether.app.R;
-import com.BetterTogether.app.TokenListener;
+import com.BetterTogether.app.DataUpdateListener;
 import com.BetterTogether.app.adapters.UserListAdapter;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
-import DB.ApiClient;
-import DB.Dao.PersonDao;
 import DB.RewardType;
-import retrofit2.Retrofit;
 
 import com.BetterTogether.app.Pair;
 import com.BetterTogether.app.Person;
 
-import static android.app.Activity.RESULT_OK;
 
-
-public class UserListFragment extends Fragment implements Observer, TokenListener {
+public class UserListFragment extends Fragment implements DataUpdateListener {
         private ArrayList<Integer> selectedItems;
 
     private DataManager manager;
 
     private GridView gridView;
-
-    private AddUserPopup addUserPopup;
 
     private boolean popupIsActive;
 
@@ -71,9 +56,6 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
 
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
-
-        Button addUser = getView().findViewById(R.id.add_user);
-        addUser.setOnClickListener(view_user -> createOrEditUser(null));
 
         Button okBtn = getView().findViewById(R.id.create_pair_button);
         okBtn.setOnClickListener(btn -> createPair());
@@ -117,16 +99,14 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
     }
 
 
-    void setUpGridView(List<Person> persons) {
-        List<Person> activeUsers = manager.getActiveUsers();
+    void setUpGridView() {
+        List<Person> persons = manager.getActiveUsers();
 
-        UserListAdapter adapter = new UserListAdapter(getContext(), activeUsers);
+        UserListAdapter adapter = new UserListAdapter(getContext(), persons);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener((adapterView, view, position, l) ->
                 selectItemAtPosition(position));
 
-        gridView.setOnItemLongClickListener(((adapterView, view, position, l) ->
-                createOrEditUser(persons.get(position))));
 
         disableScrolling();
     }
@@ -139,55 +119,6 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
         gridView.setVerticalScrollBarEnabled(false);
     }
 
-    private boolean createOrEditUser(Person person) {
-        addUserPopup = new AddUserPopup(this);
-        Button add = addUserPopup.getView().findViewById(R.id.add);
-        Button image = addUserPopup.getView().findViewById(R.id.image);
-        image.setOnClickListener(btn -> openCameraActivity());
-        addUserPopup.setImageButton(image);
-        if (person == null) {
-            createUser(add);
-        } else {
-            editUser(add, person);
-        }
-        return true;
-    }
-
-    private void createUser(Button add) {
-        add.setOnClickListener(btn -> {
-            if (!isValidInput(addUserPopup.getPerson()))
-                return;
-            manager.addUser(addUserPopup.getPerson());
-            addUserPopup.closeDialog();
-            Toast.makeText(getContext(), addUserPopup.getPerson().getUsername() + " added", Toast.LENGTH_SHORT).show();
-        });
-        addUserPopup.setAddButton(add);
-        addUserPopup.openCreateDialog();
-    }
-
-    private void editUser(Button add, Person person) {
-        add.setOnClickListener(btn -> {
-            if (!isValidInput(addUserPopup.getPerson()))
-                return;
-            manager.editUser(addUserPopup.getPerson());
-            addUserPopup.closeDialog();
-            Toast.makeText(getContext(), addUserPopup.getPerson().getUsername() + " edited", Toast.LENGTH_SHORT).show();
-        });
-        addUserPopup.setAddButton(add);
-        addUserPopup.openEditDialog(person);
-    }
-
-    private boolean isValidInput(Person person) {
-        if (manager.getAllUsers().contains(person)) {
-            Toast.makeText(getContext(), "Username already taken", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (person.getUsername().equals("") || person.getName().equals("")) {
-            Toast.makeText(getContext(), "You need to fill in all fields", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
-    }
 
     @SuppressLint("CheckResult")
     private void createPair() {
@@ -196,7 +127,10 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        Pair pair = new Pair(new Date());
+
+        long unixTimestamp = System.currentTimeMillis();
+        Pair pair = new Pair(Long.toString(unixTimestamp));
+
         pair.setPerson1(manager.getActiveUsers().get(selectedItems.get(0)).getUsername());
         pair.setPerson2(manager.getActiveUsers().get(selectedItems.get(1)).getUsername());
         manager.addPair(pair);
@@ -207,20 +141,13 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
     }
 
     public void createRewardPopupIfReachedReward() {
-        if (manager.getPizzaPairs().size() == manager.getPizzaThreshold()) {
+        if (manager.isRewardReached(RewardType.PIZZA)) {
             popupIsActive = true;
-            manager.addReward(RewardType.PIZZA);
-            RewardPopup popup = new RewardPopup(this);
-            popup.whistle(RewardType.PIZZA);
-            return;
-
+            new RewardPopup(this).whistle(RewardType.PIZZA);
         }
-        if (manager.getCakePairs().size() == manager.getCakeThreshold()) {
+        if (manager.isRewardReached(RewardType.CAKE)) {
             popupIsActive = true;
-            manager.addReward(RewardType.CAKE);
-            RewardPopup popup = new RewardPopup(this);
-            popup.whistle(RewardType.CAKE);
-            return;
+            new RewardPopup(this).whistle(RewardType.CAKE);
         }
     }
 
@@ -229,36 +156,16 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
 
     }
 
-    @SuppressLint("SetTextI18n")
     private void writeStatus() {
         if (!popupIsActive) {
             createRewardPopupIfReachedReward();
         }
 
-        TextView numPairs = getView().findViewById(R.id.num_of_pairs);
-
-        TextView pizzaCount = getView().findViewById(R.id.pizza_text);
-        TextView cakeCount = getView().findViewById(R.id.cake_text);
-
-        TextView pizzaClaim = getView().findViewById(R.id.pizza_iou);
-        TextView cakeClaim = getView().findViewById(R.id.cake_iou);
-
-        numPairs.setText(Integer.toString(manager.getAllPairs().size()));
-
-        pizzaCount.setText(Integer.toString(manager.getPizzaPairs().size()) + "/" +
-                Integer.toString(manager.getPizzaThreshold()));
-        cakeCount.setText(Integer.toString(manager.getCakePairs().size()) + "/" +
-                Integer.toString(manager.getCakeThreshold()));
-
-        pizzaClaim.setText(Integer.toString(manager.getUnusedPizza()));
-        cakeClaim.setText(Integer.toString(manager.getUnusedCake()));
-
-        if (manager.getAllPairs().isEmpty()) {
-            return;
+        if (!manager.getAllPairs().isEmpty()) {
+            TextView lastPair = getView().findViewById(R.id.last_event);
+            lastPair.setText(manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson1() +
+                    " & " + manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson2());
         }
-        TextView lastPair = getView().findViewById(R.id.last_event);
-        lastPair.setText(manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson1() +
-                " & " + manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson2());
     }
 
     private void resetSelectedPersons() {
@@ -271,26 +178,6 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
         return manager;
     }
 
-    @Override
-    public void update(Observable observable, Object o) {
-        setUpGridView(manager.getActiveUsers());
-        writeStatus();
-
-    }
-
-    private void openCameraActivity() {
-        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (camera.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivityForResult(camera, 1);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            setCameraResult(data);
-        }
-    }
 
     @Override
     public void tokenRejected(){
@@ -298,9 +185,18 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
     }
 
     @Override
+    public void updateGrid() {
+        setUpGridView();
+    }
+
+    @Override
+    public void updateStatus() {
+        writeStatus();
+    }
+
+    @Override
     public void tokenReceived(String token) {
         manager = new DataManager(token, this);
-        manager.addObserver(this);
     }
 
     private void askForToken(boolean rejected){
@@ -313,9 +209,4 @@ public class UserListFragment extends Fragment implements Observer, TokenListene
         new TokenPopup(this).setUpGetTokenView(message);
     }
 
-    private void setCameraResult(Intent data){
-        Bundle extras = data.getExtras();
-        Bitmap imageBitmap = (Bitmap) extras.get("data");
-        addUserPopup.setUserImage(imageBitmap);
-    }
 }

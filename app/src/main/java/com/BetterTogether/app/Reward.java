@@ -1,40 +1,30 @@
 package com.BetterTogether.app;
-import java.util.Date;
 import DB.RewardType;
 
 public class Reward {
 
-    private Date date;
+    private String date;
 
     private RewardType type;
 
     private boolean usedReward;
 
-    public Reward(Date date, RewardType type) {
+    public Reward(String date, RewardType type) {
         this.date = date;
         this.type = type;
         this.usedReward = false;
     }
 
-    public Reward(Date date, RewardType type, boolean usedReward) {
-        this.date = date;
-        this.type = type;
-        this.usedReward = usedReward;
-    }
 
     public boolean isUsedReward() {
         return usedReward;
     }
 
-    public void setUsedReward(boolean usedReward) {
-        this.usedReward = usedReward;
-    }
-
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
