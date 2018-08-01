@@ -21,12 +21,8 @@ public class DataManager {
     private PairDao pairDao;
     private RewardDao rewardDao;
 
-
-    private List<Person> allUsers;
-    private List<Person> activeUsers;
-
     private List<Pair> allPairs;
-
+    private List<Person> activeUsers;
     private List<Pair> pizzaPairs;
     private List<Pair> cakePairs;
     private int cakeThreshold;
@@ -38,14 +34,12 @@ public class DataManager {
     private DataUpdateListener listener;
 
     public DataManager(String token, DataUpdateListener listener) {
-        this(ApiClient.getRetrofitInstance(token));
-        this.listener = listener;
-    }
-
-    public DataManager(Retrofit apiClient) {
+        Retrofit apiClient = ApiClient.getRetrofitInstance(token);
         personDao = apiClient.create(PersonDao.class);
         pairDao = apiClient.create(PairDao.class);
         rewardDao = apiClient.create(RewardDao.class);
+
+        this.listener = listener;
 
         cakeThreshold = 10000;
         pizzaThreshold = 10000;
@@ -54,7 +48,6 @@ public class DataManager {
         pizzaPairs = new ArrayList<>();
         cakePairs = new ArrayList<>();
         allPairs = new ArrayList<>();
-        allUsers = new ArrayList<>();
         activeUsers = new ArrayList<>();
 
         validateToken();
@@ -90,7 +83,6 @@ public class DataManager {
         updatePairs();
         updateThresholds();
         updateUnusedRewards();
-        updateAllUsers();
         updateActiveUsers();
     }
 
@@ -164,17 +156,6 @@ public class DataManager {
     }
 
 
-    private void updateAllUsers() {
-        personDao.getAllPersons().enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    allUsers = ResponsePojoConverter.personResponseToPerson(response.body());
-                    listener.updateGrid();
-                })
-        );
-
-    }
-
-
     private void addReward(RewardType type) {
         long unixTimestamp = System.currentTimeMillis();
 
@@ -201,9 +182,9 @@ public class DataManager {
 
     public void setUseVariableToTrue(RewardType rewardType) {
         rewardDao.updateReward(rewardType.toString()).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    updateUnusedRewards();
-                })
+                new CallbackWrapper<>((throwable, response) ->
+                    updateUnusedRewards()
+                )
         );
 
     }

@@ -22,9 +22,6 @@ public interface RewardDao {
     @GET("/api/reward/unused/{reward_type}")
     Call<Integer> numberOfUnusedRewards(@Path("reward_type") RewardType type);
 
-    @GET("/api/reward/unused/earliest/{reward_type}")
-    Call<List<RewardResponse>> getEarliestUnusedReward(RewardType type);
-
     @PUT("/api/reward/use/{reward_type}")
     Call<List<RewardResponse>> updateReward(@Path("reward_type") String rewardType);
 
