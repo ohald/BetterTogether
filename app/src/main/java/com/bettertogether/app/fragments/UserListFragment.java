@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bettertogether.app.dialogs.RewardPopup;
-
+import com.bettertogether.app.dialogs.ErrorPopup;
 import com.bettertogether.app.DataManager;
 import com.bettertogether.app.dialogs.TokenPopup;
 import com.bettertogether.app.R;
@@ -237,8 +237,11 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
 
     @Override
-    public void tokenRejected(){
-        askForToken(true);
+    public void responseError(int code, String message) {
+        if (code == 403)
+            askForToken(true);
+        else
+            new ErrorPopup(this).setUpErrorPopup(message);
     }
 
     @Override

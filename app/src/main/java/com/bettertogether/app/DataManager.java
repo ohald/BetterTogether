@@ -13,6 +13,7 @@ import db.RewardType;
 
 import db.responseparsers.ResponsePojoConverter;
 import db.responseparsers.RewardResponse;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class DataManager {
@@ -54,15 +55,24 @@ public class DataManager {
 
     }
 
+    private boolean isValidResponse(Throwable t, Response r) {
+        if (r == null) {
+            listener.responseError(-1, t.getMessage());
+            return false;
+        } else if (r.code() == 200) {
+            return true;
+        } else {
+            listener.responseError(r.code(), r.message());
+            return false;
+        }
+    }
+
     private void validateToken() {
+        // This is an arbitrary choice of request, to see what
+        // responses we get.
         rewardDao.getThreshold(RewardType.PIZZA).enqueue(new CallbackWrapper<>((throwable, response) -> {
-            if (response.code() == 403) {
-                listener.tokenRejected();
-            } else if (response.code() == 200) {
+            if (isValidResponse(throwable, response))
                 initializeData();
-            } else {
-                //TODO:Error-message something
-            }
         }));
 
     }
@@ -89,23 +99,27 @@ public class DataManager {
     private void updatePairs() {
         pairDao.getHistory().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    this.allPairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                    listener.updateStatus();
+                    if (isValidResponse(throwable, response)) {
+                        this.allPairs = ResponsePojoConverter.pairResponseToPair(response.body());
+                        listener.updateStatus();
+                    }
                 }));
 
         pairDao.getPairsSinceLastReward(RewardType.PIZZA).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    this.pizzaPairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                    listener.updateStatus();
-
+                    if (isValidResponse(throwable, response)) {
+                        this.pizzaPairs = ResponsePojoConverter.pairResponseToPair(response.body());
+                        listener.updateStatus();
+                    }
                 })
         );
 
         pairDao.getPairsSinceLastReward(RewardType.CAKE).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    this.cakePairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                    listener.updateStatus();
-
+                    if (isValidResponse(throwable, response)) {
+                        this.cakePairs = ResponsePojoConverter.pairResponseToPair(response.body());
+                        listener.updateStatus();
+                    }
                 })
         );
 
@@ -115,14 +129,17 @@ public class DataManager {
     private void updateThresholds() {
         rewardDao.getThreshold(RewardType.PIZZA).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    this.pizzaThreshold = response.body().get(0).getThreshold();
-                    listener.updateStatus();
-
+                    if (isValidResponse(throwable, response)) {
+                        this.pizzaThreshold = response.body().get(0).getThreshold();
+                        listener.updateStatus();
+                    }
                 }));
         rewardDao.getThreshold(RewardType.CAKE).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    this.cakeThreshold = response.body().get(0).getThreshold();
-                    listener.updateStatus();
+                    if (isValidResponse(throwable, response)) {
+                        this.cakeThreshold = response.body().get(0).getThreshold();
+                        listener.updateStatus();
+                    }
                 }));
     }
 
@@ -146,12 +163,10 @@ public class DataManager {
     private void updateActiveUsers() {
         personDao.getAllActivePersons().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    if (response.body() == null) {
-                        throwable.printStackTrace();
-                        return;
+                    if (isValidResponse(throwable, response)) {
+                        activeUsers = ResponsePojoConverter.personResponseToPerson(response.body());
+                        listener.updateGrid();
                     }
-                    activeUsers = ResponsePojoConverter.personResponseToPerson(response.body());
-                    listener.updateGrid();
                 }));
     }
 
@@ -162,26 +177,31 @@ public class DataManager {
 
         rewardDao.addReward(res).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    updatePairs();
-                    updateUnusedRewards();
-                    listener.updateStatus();
-
+                    if (isValidResponse(throwable, response)) {
+                        updatePairs();
+                        updateUnusedRewards();
+                        listener.updateStatus();
+                    }
                 }));
     }
 
 
     public void addPair(Pair pair) {
         pairDao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
-                new CallbackWrapper<>((throwable, response) ->
-                        updatePairs()
+                new CallbackWrapper<>((throwable, response) -> {
+                    if (isValidResponse(throwable, response))
+                        updatePairs();
+                }
                 ));
     }
 
 
     public void setUseVariableToTrue(RewardType rewardType) {
         rewardDao.updateReward(rewardType.toString()).enqueue(
-                new CallbackWrapper<>((throwable, response) ->
-                    updateUnusedRewards()
+                new CallbackWrapper<>((throwable, response) -> {
+                    if (isValidResponse(throwable, response))
+                        updateUnusedRewards();
+                }
                 )
         );
 

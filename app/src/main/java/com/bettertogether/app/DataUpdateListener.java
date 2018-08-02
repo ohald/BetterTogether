@@ -4,7 +4,7 @@ public interface DataUpdateListener {
 
     void tokenReceived(String token);
 
-    void tokenRejected();
+    void responseError(int code, String message);
 
     void updateGrid();
 
