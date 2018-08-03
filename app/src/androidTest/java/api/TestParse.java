@@ -156,12 +156,9 @@ public class TestParse {
     public void canParseRewardResponse() throws IOException{
         addRewardResponse();
         RewardResponse r = ResponsePojoConverter.rewardToRewardResponse(
-                new Reward(
-                        Long.toString(System.currentTimeMillis()/1000),
-                        RewardType.PIZZA));
+                new Reward(RewardType.PIZZA));
         RewardResponse res = rewardDao.addReward(r).execute().body().get(0);
 
-        assertThat(res.getDate(), equalTo("10000"));
         assertThat(res.getRewardType(), equalTo(RewardType.PIZZA));
         assertThat(res.getUsedReward(), equalTo(false));
     }
@@ -189,11 +186,10 @@ public class TestParse {
     @Test
     public void canParsePairResponse() throws IOException{
         addPairResponse();
-        Pair p = new Pair("esog", "ohald", "10000000");
+        Pair p = new Pair("esog", "ohald");
         PairResponse r = pairDao.insertPair(
                 ResponsePojoConverter.pairToPairResponse(p)).execute().body();
 
-        assertThat(r.getDate(), equalTo(p.getDate()));
         assertThat(r.getPerson1(), equalTo(p.getPerson1()));
         assertThat(r.getPerson2(), equalTo(p.getPerson2()));
     }

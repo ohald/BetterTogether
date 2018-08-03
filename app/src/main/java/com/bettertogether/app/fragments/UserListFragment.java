@@ -169,11 +169,9 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
             return;
         }
 
-        long unixTimestamp = System.currentTimeMillis();
-        Pair pair = new Pair(Long.toString(unixTimestamp));
-
-        pair.setPerson1(manager.getActiveUsers().get(selectedItems.get(0)).getUsername());
-        pair.setPerson2(manager.getActiveUsers().get(selectedItems.get(1)).getUsername());
+        Pair pair = new Pair(
+                manager.getActiveUsers().get(selectedItems.get(0)).getUsername(),
+                manager.getActiveUsers().get(selectedItems.get(1)).getUsername());
         manager.addPair(pair);
         resetSelectedPersons();
         Toast.makeText(getContext(),

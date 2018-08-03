@@ -1,5 +1,6 @@
 package db.responseparsers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -16,6 +17,8 @@ public class PairResponse {
     private String person1;
     @JsonProperty("person2")
     private String person2;
+
+    @JsonIgnore
     @JsonProperty("date")
     private String date;
 
@@ -38,16 +41,5 @@ public class PairResponse {
     public void setPerson2(String person2) {
         this.person2 = person2;
     }
-
-    @JsonProperty("date")
-    public String getDate() {
-        return date;
-    }
-
-    @JsonProperty("date")
-    public void setDate(String date) {
-        this.date = date;
-    }
-
 
 }

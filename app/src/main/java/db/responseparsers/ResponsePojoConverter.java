@@ -14,12 +14,11 @@ public class ResponsePojoConverter {
         PairResponse r = new PairResponse();
         r.setPerson1(p.getPerson1());
         r.setPerson2(p.getPerson2());
-        r.setDate(r.getDate());
         return r;
     }
 
     public static Pair pairResponseToPair(PairResponse r){
-        return new Pair(r.getPerson1(), r.getPerson2(), r.getDate());
+        return new Pair(r.getPerson1(), r.getPerson2());
     }
 
     public static List<Pair> pairResponseToPair(List<PairResponse> responses){
@@ -42,7 +41,6 @@ public class ResponsePojoConverter {
 
     public static RewardResponse rewardToRewardResponse(Reward r){
         RewardResponse res = new RewardResponse();
-        res.setDate(r.getDate());
         res.setRewardType(r.getType().toString());
         res.setUsedReward(Boolean.toString(r.isUsedReward()));
         return res;
