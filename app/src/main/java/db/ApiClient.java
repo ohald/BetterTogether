@@ -22,7 +22,7 @@ public class ApiClient {
 
         ApiClient.token = token;
 
-        retrofit = new retrofit2.Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(new OkHttpClient.Builder()
                         .addInterceptor(getTokenInterceptor(token))

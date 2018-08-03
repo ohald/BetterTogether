@@ -13,7 +13,6 @@ import db.RewardType;
 
 import db.responseparsers.ResponsePojoConverter;
 import db.responseparsers.RewardResponse;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class DataManager {
