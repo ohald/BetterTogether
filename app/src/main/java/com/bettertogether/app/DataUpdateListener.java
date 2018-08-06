@@ -1,5 +1,7 @@
 package com.bettertogether.app;
 
+import db.RewardType;
+
 public interface DataUpdateListener {
 
     void tokenReceived(String token);
@@ -9,4 +11,8 @@ public interface DataUpdateListener {
     void updateGrid();
 
     void updateStatus();
+
+    void useReward(RewardType type);
+
+    void rewardReached(RewardType type);
 }

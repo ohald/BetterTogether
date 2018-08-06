@@ -35,13 +35,11 @@ import com.bettertogether.app.Person;
 
 
 public class UserListFragment extends Fragment implements DataUpdateListener {
-        private ArrayList<Integer> selectedItems;
+    private ArrayList<Integer> selectedItems;
 
     private DataManager manager;
-
     private GridView gridView;
 
-    private boolean popupIsActive;
     private Button claimCake;
     private Button claimPizza;
     private Button resetSelection;
@@ -141,7 +139,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         if (selectedItems.size() >= 2)
             createPair();
     }
-    
+
     private void pimpButton(Button button) {
         button.getBackground().setColorFilter(pimpedButtonColor, PorterDuff.Mode.MULTIPLY);
     }
@@ -209,27 +207,12 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         }, 5000);
     }
 
-    public void createRewardPopupIfReachedReward() {
-        if (manager.isRewardReached(RewardType.PIZZA)) {
-            popupIsActive = true;
-            new RewardPopup(this).whistle(RewardType.PIZZA);
-        }
-        if (manager.isRewardReached(RewardType.CAKE)) {
-            popupIsActive = true;
-            new RewardPopup(this).whistle(RewardType.CAKE);
-        }
-    }
-
-    public void setPopupIsActiveFalse() {
-        this.popupIsActive = false;
-
+    @Override
+    public void rewardReached(RewardType type) {
+        new RewardPopup(this).whistle(type);
     }
 
     private void writeStatus() {
-        if (!popupIsActive) {
-            createRewardPopupIfReachedReward();
-        }
-
         pimpIfAvailableRewards();
         TextView lastPair = getView().findViewById(R.id.last_event);
 
@@ -258,17 +241,17 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
             unPimpButton(claimPizza);
     }
 
+    @Override
+    public void useReward(RewardType type) {
+        manager.setUseVariableToTrue(type);
+    }
+
     private void resetSelectedPersons() {
         for (Integer i : selectedItems)
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
         selectedItems.clear();
         unPimpButton(resetSelection);
     }
-
-    public DataManager getManager() {
-        return manager;
-    }
-
 
     @Override
     public void responseError(int code, String message) {

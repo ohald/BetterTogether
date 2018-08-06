@@ -77,16 +77,13 @@ public class DataManager {
 
     }
 
-    public boolean isRewardReached(RewardType type) {
+    private void createRewardIfReached(RewardType type) {
         if (pizzaPairs.size() >= pizzaThreshold && type == RewardType.PIZZA) {
             addReward(RewardType.PIZZA);
-            return true;
         }
         if (cakePairs.size() >= cakeThreshold && type == RewardType.CAKE) {
             addReward(RewardType.CAKE);
-            return true;
         }
-        return false;
     }
 
     private void initializeData() {
@@ -110,6 +107,7 @@ public class DataManager {
                     if (isValidResponse(throwable, response)) {
                         this.pizzaPairs = ResponsePojoConverter.pairResponseToPair(response.body());
                         listener.updateStatus();
+                        createRewardIfReached(RewardType.PIZZA);
                     }
                 })
         );
@@ -119,6 +117,7 @@ public class DataManager {
                     if (isValidResponse(throwable, response)) {
                         this.cakePairs = ResponsePojoConverter.pairResponseToPair(response.body());
                         listener.updateStatus();
+                        createRewardIfReached(RewardType.CAKE);
                     }
                 })
         );
@@ -181,6 +180,7 @@ public class DataManager {
                         updatePairs();
                         updateUnusedRewards();
                         listener.updateStatus();
+                        listener.rewardReached(type);
                     }
                 }));
     }

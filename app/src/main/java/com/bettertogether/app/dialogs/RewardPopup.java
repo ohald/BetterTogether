@@ -31,7 +31,6 @@ public class RewardPopup extends PopupView {
         }
 
         alertBuilder.setPositiveButton(R.string.ok, (dialog, id) -> {
-            userListFragment.setPopupIsActiveFalse();
             dialog.dismiss();
         });
 
@@ -47,7 +46,8 @@ public class RewardPopup extends PopupView {
         alertBuilder.setMessage("Do you want to claim a " + rewardType.toString() + " event?");
 
         alertBuilder.setPositiveButton(R.string.yes, (dialog, id) -> {
-            userListFragment.getManager().setUseVariableToTrue(rewardType);
+            userListFragment.useReward(rewardType);
+
             Toast confirmMsg = Toast.makeText(userListFragment.getContext(), "You have claimed " + rewardType.toString(), Toast.LENGTH_SHORT);
             confirmMsg.show();
             dialog.dismiss();
