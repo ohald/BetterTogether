@@ -42,7 +42,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     private boolean popupIsActive;
     private Button claimCake;
     private Button claimPizza;
-    private Button addPair;
     private Button resetSelection;
 
     private int selectionColor;
@@ -68,9 +67,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
-
-        addPair = getView().findViewById(R.id.create_pair_button);
-        addPair.setOnClickListener(btn -> createPair());
 
         resetSelection = getView().findViewById(R.id.reset_selection_button);
         resetSelection.setOnClickListener(view12 -> resetSelectedPersons());
@@ -117,8 +113,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
             // if nothing to de-select
             if(selectedItems.size() == 0)
                 unPimpButton(resetSelection);
-            unPimpButton(addPair);
-
             return;
         }
 
@@ -129,10 +123,8 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
         gridView.getChildAt(position).setBackgroundColor(selectionColor);
 
-        //change color if buttons does something on click
-        if(selectedItems.size() == 2) {
-            pimpButton(addPair);
-        }
+        if(selectedItems.size() >= 2)
+            createPair();
     }
     
     private void pimpButton(Button button) {
@@ -228,7 +220,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
         selectedItems.clear();
         unPimpButton(resetSelection);
-        unPimpButton(addPair);
     }
 
     public DataManager getManager() {
