@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,6 +26,7 @@ import com.bettertogether.app.adapters.UserListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import db.RewardType;
 
@@ -46,6 +48,8 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
     private int selectionColor;
     private int pimpedButtonColor;
+    private Stack<Pair> undoStack;
+    private Button undo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,6 +62,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         selectedItems = new ArrayList<>();
+        undoStack = new Stack<>();
 
         int energyRed = getResources().getColor(R.color.energyRed);
         selectionColor = energyRed;
@@ -70,6 +75,16 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
         resetSelection = getView().findViewById(R.id.reset_selection_button);
         resetSelection.setOnClickListener(view12 -> resetSelectedPersons());
+        undo = getView().findViewById(R.id.undo_pair_button);
+        undo.setOnClickListener(btn -> {
+            if (!undoStack.isEmpty()) {
+                Pair p = undoStack.pop();
+                Toast.makeText(getContext(), p.getPerson1() + " & " + p.getPerson2() + " undone", Toast.LENGTH_SHORT).show();
+                updateStatus();
+            }
+            if(undoStack.isEmpty())
+                unPimpButton(undo);
+        });
 
         claimCake = getView().findViewById(R.id.reset_cake);
         claimCake.setOnClickListener(btn -> {
@@ -123,7 +138,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
         gridView.getChildAt(position).setBackgroundColor(selectionColor);
 
-        if(selectedItems.size() >= 2)
+        if (selectedItems.size() >= 2)
             createPair();
     }
     
@@ -164,11 +179,27 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         Pair pair = new Pair(
                 manager.getActiveUsers().get(selectedItems.get(0)).getUsername(),
                 manager.getActiveUsers().get(selectedItems.get(1)).getUsername());
-        manager.addPair(pair);
+
+        undoStack.push(pair);
+        pimpButton(undo);
+        addPairIfNotUndone(pair);
         resetSelectedPersons();
+        updateStatus();
+
         Toast.makeText(getContext(),
                 "Added pair programming with: " + pair.getPerson1() +
                         " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void addPairIfNotUndone(Pair p) {
+        new Handler().postDelayed(() -> {
+            if (undoStack.contains(p)) {
+                manager.addPair(p);
+                undoStack.remove(p);
+                if(undoStack.isEmpty())
+                    unPimpButton(undo);
+            }
+        }, 5000);
     }
 
     public void createRewardPopupIfReachedReward() {
@@ -193,10 +224,15 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         }
 
         pimpIfAvailableRewards();
-        if (!manager.getAllPairs().isEmpty()) {
-            TextView lastPair = getView().findViewById(R.id.last_event);
-            lastPair.setText(manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson1() +
-                    " & " + manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson2());
+        TextView lastPair = getView().findViewById(R.id.last_event);
+
+        Pair p;
+        if(!undoStack.isEmpty()){
+            p = undoStack.peek();
+            lastPair.setText(p.getPerson1() + " & " + p.getPerson2());
+        } else if (!manager.getAllPairs().isEmpty()) {
+            p = manager.getAllPairs().get(manager.getAllPairs().size()-1);
+            lastPair.setText(p.getPerson1() + " & " + p.getPerson2());
         }
     }
 
