@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import com.bettertogether.app.fragments.UserListFragment;
+import com.bettertogether.app.R;
 
 public class PopupView {
 
@@ -15,7 +16,7 @@ public class PopupView {
     public PopupView(UserListFragment userListFragment) {
         this.userListFragment = userListFragment;
         layoutInflater = (LayoutInflater) this.userListFragment.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        alertBuilder = new AlertDialog.Builder(this.userListFragment.getContext());
+        alertBuilder = new AlertDialog.Builder(this.userListFragment.getContext(), R.style.MyTheme);
 
     }
 }
