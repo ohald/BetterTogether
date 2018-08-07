@@ -144,28 +144,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         button.getBackground().setColorFilter(pimpedButtonColor, PorterDuff.Mode.MULTIPLY);
     }
 
-    void setUpGridView() {
-        List<Person> persons = manager.getActiveUsers();
-
-        setGridColumnNumber(persons.size());
-        UserListAdapter adapter = new UserListAdapter(getContext(), persons);
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener((adapterView, view, position, l) ->
-                selectItemAtPosition(position));
-
-
-        disableScrolling();
-    }
-
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void disableScrolling() {
-        gridView.setOnTouchListener((View v, MotionEvent e) ->
-                e.getAction() == MotionEvent.ACTION_MOVE);
-        gridView.setVerticalScrollBarEnabled(false);
-    }
-
-
     @SuppressLint("CheckResult")
     private void createPair() {
         if (selectedItems.size() < 2) {
@@ -212,7 +190,8 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         new RewardPopup(this).whistle(type);
     }
 
-    private void writeStatus() {
+    @Override
+    public void updateStatus() {
         pimpIfAvailableRewards();
         TextView lastPair = getView().findViewById(R.id.last_event);
 
@@ -263,12 +242,23 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
     @Override
     public void updateGrid() {
-        setUpGridView();
+        List<Person> persons = manager.getActiveUsers();
+
+        setGridColumnNumber(persons.size());
+        UserListAdapter adapter = new UserListAdapter(getContext(), persons);
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener((adapterView, view, position, l) ->
+                selectItemAtPosition(position));
+
+        disableScrolling();
     }
 
-    @Override
-    public void updateStatus() {
-        writeStatus();
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void disableScrolling() {
+        gridView.setOnTouchListener((View v, MotionEvent e) ->
+                e.getAction() == MotionEvent.ACTION_MOVE);
+        gridView.setVerticalScrollBarEnabled(false);
     }
 
     public void setGridColumnNumber(int people) {
