@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.BetterTogether.app">
+    package="com.bettertogether.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -24,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Overview"
+            android:name="com.bettertogether.app.Overview"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
 
