@@ -95,6 +95,17 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        //nothing is fetched from DB yet.
+        if(manager == null){
+            return;
+        }
+        int num = manager.getActiveUsers().size();
+        setGridColumnNumber(num);
 
     }
 
@@ -131,6 +142,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     void setUpGridView() {
         List<Person> persons = manager.getActiveUsers();
 
+        setGridColumnNumber(persons.size());
         UserListAdapter adapter = new UserListAdapter(getContext(), persons);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener((adapterView, view, position, l) ->
@@ -239,6 +251,20 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     @Override
     public void updateStatus() {
         writeStatus();
+    }
+
+    public void setGridColumnNumber(int people) {
+        int orientation = this.getResources().getConfiguration().orientation;
+        int numCols;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            //calculate number of colums. 7 people fit in one column
+            numCols = (int) Math.ceil(people / 7.0);
+        } else {
+            //calculate number of colums. 4 people fit in one column
+            numCols = (int) Math.ceil(people / 4.0);
+        }
+        gridView.setNumColumns(numCols);
+
     }
 
     @Override
