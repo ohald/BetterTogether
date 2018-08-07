@@ -3,7 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="backgroundColor">#ff243746</color>
     <color name="energyRed">#ff1243</color>
     <color name="white">#FFFFFF</color>
     <color name="slateBlue">#243746</color>
+    <color name="black">#243746</color>
 </resources>
