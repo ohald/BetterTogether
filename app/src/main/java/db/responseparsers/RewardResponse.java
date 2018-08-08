@@ -1,5 +1,6 @@
 package db.responseparsers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -15,6 +16,7 @@ import db.RewardType;
 public class RewardResponse {
 
     @JsonProperty("date")
+    @JsonIgnore()
     private String date;
 
     @JsonProperty("reward_type")
@@ -22,16 +24,6 @@ public class RewardResponse {
 
     @JsonProperty("used_reward")
     private String used_reward;
-
-    @JsonProperty("date")
-    public String getDate() {
-        return date;
-    }
-
-    @JsonProperty("date")
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     @JsonProperty("reward_type")
     public RewardType getRewardType() {

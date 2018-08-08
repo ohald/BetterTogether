@@ -157,10 +157,8 @@ public class DataManager {
 
 
     private void addReward(RewardType type) {
-        long unixTimestamp = System.currentTimeMillis();
-
         RewardResponse res = ResponsePojoConverter.rewardToRewardResponse(
-                new Reward(Long.toString(unixTimestamp), type));
+                new Reward(type));
 
         rewardDao.addReward(res).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {

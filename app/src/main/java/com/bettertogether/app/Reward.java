@@ -3,29 +3,17 @@ import db.RewardType;
 
 public class Reward {
 
-    private String date;
-
     private RewardType type;
 
     private boolean usedReward;
 
-    public Reward(String date, RewardType type) {
-        this.date = date;
+    public Reward(RewardType type) {
         this.type = type;
         this.usedReward = false;
     }
 
-
     public boolean isUsedReward() {
         return usedReward;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public RewardType getType() {
