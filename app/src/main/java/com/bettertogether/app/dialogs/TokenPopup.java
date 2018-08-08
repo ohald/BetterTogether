@@ -29,6 +29,7 @@ public class TokenPopup extends PopupView {
 
 
         AlertDialog dialog = alertBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 
