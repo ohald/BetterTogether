@@ -29,9 +29,6 @@ public class DataManager {
     private int cakeThreshold;
     private int pizzaThreshold;
 
-    private int unusedCake;
-    private int unusedPizza;
-
     private DataUpdateListener listener;
 
     public DataManager(String token, DataUpdateListener listener) {
@@ -44,8 +41,6 @@ public class DataManager {
 
         cakeThreshold = 10000;
         pizzaThreshold = 10000;
-        unusedCake = -1;
-        unusedPizza = -1;
         pizzaPairs = new ArrayList<>();
         cakePairs = new ArrayList<>();
         allPairs = new ArrayList<>();
@@ -89,7 +84,6 @@ public class DataManager {
     private void initializeData() {
         updatePairs();
         updateThresholds();
-        updateUnusedRewards();
         updateActiveUsers();
     }
 
@@ -147,22 +141,6 @@ public class DataManager {
         );
     }
 
-    private void updateUnusedRewards() {
-        rewardDao.numberOfUnusedRewards(RewardType.PIZZA).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    this.unusedPizza = response.body();
-                    listener.updateStatus();
-
-                })
-        );
-        rewardDao.numberOfUnusedRewards(RewardType.CAKE).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    this.unusedCake = response.body();
-                    listener.updateStatus();
-                })
-        );
-    }
-
     private void updateCakePairs() {
         pairDao.getPairsSinceLastReward(RewardType.CAKE).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
@@ -182,7 +160,6 @@ public class DataManager {
         rewardDao.addReward(res).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     if(isValidResponse(throwable,response)) {
-                        updateUnusedRewards();
                         if (type == RewardType.CAKE)
                             updateCakePairs();
                         else
@@ -201,17 +178,6 @@ public class DataManager {
                 ));
     }
 
-
-    public void setUseVariableToTrue(RewardType rewardType) {
-        rewardDao.updateReward(rewardType.toString()).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response))
-                        updateUnusedRewards();
-                }
-                )
-        );
-    }
-
     private void updateActiveUsers() {
         personDao.getAllActivePersons().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
@@ -223,14 +189,6 @@ public class DataManager {
 
     public List<Pair> getAllPairs() {
         return allPairs;
-    }
-
-    public int getUnusedCake() {
-        return unusedCake;
-    }
-
-    public int getUnusedPizza() {
-        return unusedPizza;
     }
 
     public List<Person> getActiveUsers() {

@@ -40,8 +40,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     private DataManager manager;
     private GridView gridView;
 
-    private Button claimCake;
-    private Button claimPizza;
     private Button resetSelection;
 
     private int selectionColor;
@@ -84,26 +82,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
                 unPimpButton(undo);
         });
 
-        claimCake = getView().findViewById(R.id.reset_cake);
-        claimCake.setOnClickListener(btn -> {
-            if (manager.getUnusedCake() > 0) {
-                new RewardPopup(this).claimReward(RewardType.CAKE);
-            } else {
-                Toast.makeText(getContext(), "You don't have any cake to claim",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        claimPizza = getView().findViewById(R.id.reset_pizza);
-        claimPizza.setOnClickListener(btn -> {
-            if (manager.getUnusedPizza() > 0) {
-                new RewardPopup(this).claimReward(RewardType.PIZZA);
-            } else {
-                Toast.makeText(getContext(), "You don't have any pizza to claim",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -192,7 +170,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
     @Override
     public void updateStatus() {
-        pimpIfAvailableRewards();
         TextView lastPair = getView().findViewById(R.id.last_event);
 
         Pair p;
@@ -209,21 +186,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         button.getBackground().clearColorFilter();
     }
 
-    private void pimpIfAvailableRewards() {
-        if (manager.getUnusedCake() > 0)
-            pimpButton(claimCake);
-        else
-            unPimpButton(claimCake);
-        if (manager.getUnusedPizza() > 0)
-            pimpButton(claimPizza);
-        else
-            unPimpButton(claimPizza);
-    }
-
-    @Override
-    public void useReward(RewardType type) {
-        manager.setUseVariableToTrue(type);
-    }
 
     private void resetSelectedPersons() {
         for (Integer i : selectedItems)

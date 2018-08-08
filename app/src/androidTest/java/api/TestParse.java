@@ -127,19 +127,6 @@ public class TestParse {
         );
     }
 
-    private void addNumberResponse(){
-        mockBackend.enqueue(
-                new MockResponse().setBody("1")
-        );
-    }
-
-    @Test
-    public void canParseSingleNumberResponse() throws IOException {
-        addNumberResponse();
-        Integer i = rewardDao.numberOfUnusedRewards(RewardType.PIZZA).execute().body();
-        assertThat(i, equalTo(1));
-    }
-
     @Test
     public void canParseThresholdResponse() throws IOException {
         addThresholdResponse();

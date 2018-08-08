@@ -19,12 +19,6 @@ public interface RewardDao {
     @GET("/api/threshold/get/{reward_type}")
     Call<List<ThresholdResponse>> getThreshold(@Path("reward_type") RewardType type);
 
-    @GET("/api/reward/unused/{reward_type}")
-    Call<Integer> numberOfUnusedRewards(@Path("reward_type") RewardType type);
-
-    @PUT("/api/reward/use/{reward_type}")
-    Call<List<RewardResponse>> updateReward(@Path("reward_type") String rewardType);
-
     @POST("/api/reward/add")
     Call<List<RewardResponse>> addReward(@Body RewardResponse reset);
 
