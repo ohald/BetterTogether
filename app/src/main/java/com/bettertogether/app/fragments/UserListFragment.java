@@ -183,12 +183,19 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         undoStack.push(pair);
         pimpButton(undo);
         addPairIfNotUndone(pair);
-        resetSelectedPersons();
+        resetSelectedWithDelay();
         updateStatus();
 
         Toast.makeText(getContext(),
                 "Added pair programming with: " + pair.getPerson1() +
                         " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
+    }
+
+    // Used to show the selection of the second person
+    // for a brief time, before deselecting both on add.
+    private void resetSelectedWithDelay(){
+        new Handler().postDelayed(this::resetSelectedPersons, 500);
+
     }
 
     private void addPairIfNotUndone(Pair p) {
