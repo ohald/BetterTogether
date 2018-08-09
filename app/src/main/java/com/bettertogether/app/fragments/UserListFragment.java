@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,6 +47,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     private int pimpedButtonColor;
     private Stack<Pair> undoStack;
     private Button undo;
+    private SwipeRefreshLayout refreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,6 +70,12 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
+
+        refreshLayout = getView().findViewById(R.id.swiperefresh);
+        refreshLayout.setOnRefreshListener(() -> manager.updateActiveUsers());
+
+        //creates load symbol on startup
+        refreshLayout.setRefreshing(true);
 
         resetSelection = getView().findViewById(R.id.reset_selection_button);
         resetSelection.setOnClickListener(view12 -> resetSelectedPersons());
@@ -205,6 +213,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     @Override
     public void updateGrid() {
         List<Person> persons = manager.getActiveUsers();
+        refreshLayout.setRefreshing(false);
 
         setGridColumnNumber(persons.size());
         UserListAdapter adapter = new UserListAdapter(getContext(), persons);
