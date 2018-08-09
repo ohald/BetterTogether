@@ -15,9 +15,6 @@ public interface PairDao {
     @GET("/api/pair/all")
     Call<List<PairResponse>> getHistory();
 
-    @GET("/api/pair/all/after_last_reward/{reward_type}")
-    Call<List<PairResponse>> getPairsSinceLastReward(@Path("reward_type") RewardType rewardType);
-
     @POST("/api/pair/add")
     Call<PairResponse> insertPair(@Body PairResponse pair);
 

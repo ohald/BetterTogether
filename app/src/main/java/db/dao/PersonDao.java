@@ -11,9 +11,6 @@ import retrofit2.http.Path;
 
 public interface PersonDao {
 
-    @GET("/api/user/get/{username}")
-    Call<PersonResponse> getPerson(@Path("username") String user);
-
     @GET("/api/user/active")
     Call<List<PersonResponse>> getAllActivePersons();
 

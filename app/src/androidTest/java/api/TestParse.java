@@ -18,13 +18,11 @@ import db.RewardType;
 import com.bettertogether.app.Pair;
 
 import db.dao.PersonDao;
-import com.bettertogether.app.Reward;
-import com.bettertogether.app.Threshold;
+
 import db.responseparsers.PairResponse;
 import db.responseparsers.PersonResponse;
 import db.responseparsers.ResponsePojoConverter;
 import db.responseparsers.RewardResponse;
-import db.responseparsers.ThresholdResponse;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.mockwebserver.MockResponse;
@@ -72,16 +70,6 @@ public class TestParse {
       mockBackend.close();
     }
 
-    private void addUserResponse(){
-        mockBackend.enqueue(
-                new MockResponse().setBody("{" +
-                        "\"username\": \"ohald\"" +
-                        ", \"name\": \"Oyvor\"" +
-                        ", \"active\" : \"true\" }")
-        );
-
-    }
-
     private void addUserListResponse(){
         mockBackend.enqueue(
                 new MockResponse().setBody("[ {" +
@@ -119,24 +107,6 @@ public class TestParse {
         );
     }
 
-    private void addThresholdResponse(){
-        mockBackend.enqueue(
-                new MockResponse().setBody("[{" +
-                        "\"reward_type\": \"pizza\"" +
-                        ", \"threshold\" : \"50\"}]")
-        );
-    }
-
-    @Test
-    public void canParseThresholdResponse() throws IOException {
-        addThresholdResponse();
-        ThresholdResponse r = rewardDao.setThreshold
-                (ResponsePojoConverter.thresholdToThresholdResponse
-                        (new Threshold(RewardType.PIZZA, 50))).execute().body().get(0);
-
-        assertThat(r.getRewardType(), equalTo(RewardType.PIZZA));
-        assertThat(r.getThreshold(), equalTo(50));
-    }
 
 
     @Test
@@ -153,8 +123,8 @@ public class TestParse {
 
     @Test
     public void canParsePersonResponse() throws IOException {
-        addUserResponse();
-        PersonResponse p = personDao.getPerson("ohald").execute().body();
+        addUserListResponse();
+        PersonResponse p = personDao.getAllActivePersons().execute().body().get(0);
 
         assertThat(p.getUsername(), equalTo("ohald"));
         assertThat(p.getName(), equalTo("Oyvor"));
