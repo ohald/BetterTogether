@@ -12,17 +12,13 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.List;
 
-import db.dao.PairDao;
-import db.dao.RewardDao;
-import db.RewardType;
-import com.bettertogether.app.Pair;
+import db.Dao;
 
-import db.dao.PersonDao;
+import com.bettertogether.app.Pair;
 
 import db.responseparsers.PairResponse;
 import db.responseparsers.PersonResponse;
 import db.responseparsers.ResponsePojoConverter;
-import db.responseparsers.RewardResponse;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.mockwebserver.MockResponse;
@@ -37,10 +33,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(AndroidJUnit4.class)
 public class TestParse {
 
-    private PersonDao personDao;
-    private PairDao pairDao;
+    private Dao dao;
     private Retrofit API;
-    private RewardDao rewardDao;
 
     @Rule
     public MockWebServer mockBackend = new MockWebServer();
@@ -54,9 +48,7 @@ public class TestParse {
                 .baseUrl(url)
                 .build();
 
-        personDao = API.create(PersonDao.class);
-        pairDao = API.create(PairDao.class);
-        rewardDao = API.create(RewardDao.class);
+        dao = API.create(Dao.class);
 
     }
 
@@ -98,33 +90,11 @@ public class TestParse {
         );
     }
 
-    private void addRewardResponse(){
-        mockBackend.enqueue(
-                new MockResponse().setBody("[{" +
-                        "\"date\": \"10000\"" +
-                        ", \"reward_type\": \"pizza\"" +
-                        ", \"used_reward\" : \"false\"}]")
-        );
-    }
-
-
-
-    @Test
-    public void canParseRewardResponse() throws IOException{
-        addRewardResponse();
-        RewardResponse r = ResponsePojoConverter.rewardToRewardResponse(
-                new Reward(RewardType.PIZZA));
-        RewardResponse res = rewardDao.addReward(r).execute().body().get(0);
-
-        assertThat(res.getRewardType(), equalTo(RewardType.PIZZA));
-        assertThat(res.getUsedReward(), equalTo(false));
-    }
-
 
     @Test
     public void canParsePersonResponse() throws IOException {
         addUserListResponse();
-        PersonResponse p = personDao.getAllActivePersons().execute().body().get(0);
+        PersonResponse p = dao.getAllActivePersons().execute().body().get(0);
 
         assertThat(p.getUsername(), equalTo("ohald"));
         assertThat(p.getName(), equalTo("Oyvor"));
@@ -135,7 +105,7 @@ public class TestParse {
     public void canParseListOfPeople() throws IOException{
         addUserListResponse();
 
-        List<PersonResponse> response = personDao.getAllActivePersons().execute().body();
+        List<PersonResponse> response = dao.getAllActivePersons().execute().body();
         assertThat(response.size(), equalTo(1));
     }
 
@@ -144,7 +114,7 @@ public class TestParse {
     public void canParsePairResponse() throws IOException{
         addPairResponse();
         Pair p = new Pair("esog", "ohald");
-        PairResponse r = pairDao.insertPair(
+        PairResponse r = dao.insertPair(
                 ResponsePojoConverter.pairToPairResponse(p)).execute().body();
 
         assertThat(r.getPerson1(), equalTo(p.getPerson1()));
@@ -154,7 +124,7 @@ public class TestParse {
     @Test
     public void canParseListOfPairs() throws IOException{
         addPairListResponse();
-        assertThat(pairDao.getHistory().execute().body().size(), equalTo(1));
+        assertThat(dao.getHistory().execute().body().size(), equalTo(1));
     }
 
 }

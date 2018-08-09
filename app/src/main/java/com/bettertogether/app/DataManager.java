@@ -6,21 +6,15 @@ import java.util.List;
 
 import db.ApiClient;
 import db.CallbackWrapper;
-import db.dao.PairDao;
-import db.dao.PersonDao;
-import db.dao.RewardDao;
-import db.RewardType;
 
+import db.Dao;
 import db.responseparsers.ResponsePojoConverter;
-import db.responseparsers.RewardResponse;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class DataManager {
 
-    private PersonDao personDao;
-    private PairDao pairDao;
-    private RewardDao rewardDao;
+    private Dao dao;
 
     private List<Pair> allPairs;
     private List<Person> activeUsers;
@@ -29,9 +23,7 @@ public class DataManager {
 
     public DataManager(String token, DataUpdateListener listener) {
         Retrofit apiClient = ApiClient.getRetrofitInstance(token);
-        personDao = apiClient.create(PersonDao.class);
-        pairDao = apiClient.create(PairDao.class);
-        rewardDao = apiClient.create(RewardDao.class);
+        dao = apiClient.create(Dao.class);
 
         this.listener = listener;
         allPairs = new ArrayList<>();
@@ -56,7 +48,7 @@ public class DataManager {
     private void validateToken() {
         // This is an arbitrary choice of request, to see what
         // responses we get.
-        pairDao.getHistory().enqueue(new CallbackWrapper<>((throwable, response) -> {
+        dao.getHistory().enqueue(new CallbackWrapper<>((throwable, response) -> {
             if (isValidResponse(throwable, response))
                 initializeData();
         }));
@@ -69,7 +61,7 @@ public class DataManager {
     }
 
     private void updatePairs() {
-        pairDao.getHistory().enqueue(
+        dao.getHistory().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     if(isValidResponse(throwable, response)) {
                         this.allPairs = ResponsePojoConverter.pairResponseToPair(response.body());
@@ -81,7 +73,7 @@ public class DataManager {
     }
 
     public void addPair(Pair pair) {
-        pairDao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
+        dao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     if (isValidResponse(throwable, response))
                         updatePairs();
@@ -90,7 +82,7 @@ public class DataManager {
     }
 
     private void updateActiveUsers() {
-        personDao.getAllActivePersons().enqueue(
+        dao.getAllActivePersons().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     activeUsers = ResponsePojoConverter.personResponseToPerson(response.body());
                     listener.updateGrid();

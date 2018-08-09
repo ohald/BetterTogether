@@ -1,21 +1,24 @@
-package db.dao;
+package db;
 
 import java.util.List;
 
-import db.RewardType;
 import db.responseparsers.PairResponse;
+import db.responseparsers.PersonResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 
-public interface PairDao {
+public interface Dao {
 
     @GET("/api/pair/all")
     Call<List<PairResponse>> getHistory();
 
     @POST("/api/pair/add")
     Call<PairResponse> insertPair(@Body PairResponse pair);
+
+    @GET("/api/user/active")
+    Call<List<PersonResponse>> getAllActivePersons();
+
 
 }
