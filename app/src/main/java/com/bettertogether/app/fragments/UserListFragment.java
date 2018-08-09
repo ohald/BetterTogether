@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,6 +26,7 @@ import com.bettertogether.app.adapters.UserListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import db.RewardType;
 
@@ -42,11 +44,12 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     private boolean popupIsActive;
     private Button claimCake;
     private Button claimPizza;
-    private Button addPair;
     private Button resetSelection;
 
     private int selectionColor;
     private int pimpedButtonColor;
+    private Stack<Pair> undoStack;
+    private Button undo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +62,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         selectedItems = new ArrayList<>();
+        undoStack = new Stack<>();
 
         int energyRed = getResources().getColor(R.color.energyRed);
         selectionColor = energyRed;
@@ -69,11 +73,18 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         gridView = getView().findViewById(R.id.user_list);
         selectedItems = new ArrayList<>();
 
-        addPair = getView().findViewById(R.id.create_pair_button);
-        addPair.setOnClickListener(btn -> createPair());
-
         resetSelection = getView().findViewById(R.id.reset_selection_button);
         resetSelection.setOnClickListener(view12 -> resetSelectedPersons());
+        undo = getView().findViewById(R.id.undo_pair_button);
+        undo.setOnClickListener(btn -> {
+            if (!undoStack.isEmpty()) {
+                Pair p = undoStack.pop();
+                Toast.makeText(getContext(), p.getPerson1() + " & " + p.getPerson2() + " undone", Toast.LENGTH_SHORT).show();
+                updateStatus();
+            }
+            if(undoStack.isEmpty())
+                unPimpButton(undo);
+        });
 
         claimCake = getView().findViewById(R.id.reset_cake);
         claimCake.setOnClickListener(btn -> {
@@ -117,8 +128,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
             // if nothing to de-select
             if(selectedItems.size() == 0)
                 unPimpButton(resetSelection);
-            unPimpButton(addPair);
-
             return;
         }
 
@@ -129,10 +138,8 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
         gridView.getChildAt(position).setBackgroundColor(selectionColor);
 
-        //change color if buttons does something on click
-        if(selectedItems.size() == 2) {
-            pimpButton(addPair);
-        }
+        if (selectedItems.size() >= 2)
+            createPair();
     }
     
     private void pimpButton(Button button) {
@@ -172,11 +179,34 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         Pair pair = new Pair(
                 manager.getActiveUsers().get(selectedItems.get(0)).getUsername(),
                 manager.getActiveUsers().get(selectedItems.get(1)).getUsername());
-        manager.addPair(pair);
-        resetSelectedPersons();
+
+        undoStack.push(pair);
+        pimpButton(undo);
+        addPairIfNotUndone(pair);
+        resetSelectedWithDelay();
+        updateStatus();
+
         Toast.makeText(getContext(),
                 "Added pair programming with: " + pair.getPerson1() +
                         " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
+    }
+
+    // Used to show the selection of the second person
+    // for a brief time, before deselecting both on add.
+    private void resetSelectedWithDelay(){
+        new Handler().postDelayed(this::resetSelectedPersons, 500);
+
+    }
+
+    private void addPairIfNotUndone(Pair p) {
+        new Handler().postDelayed(() -> {
+            if (undoStack.contains(p)) {
+                manager.addPair(p);
+                undoStack.remove(p);
+                if(undoStack.isEmpty())
+                    unPimpButton(undo);
+            }
+        }, 5000);
     }
 
     public void createRewardPopupIfReachedReward() {
@@ -201,10 +231,15 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         }
 
         pimpIfAvailableRewards();
-        if (!manager.getAllPairs().isEmpty()) {
-            TextView lastPair = getView().findViewById(R.id.last_event);
-            lastPair.setText(manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson1() +
-                    " & " + manager.getAllPairs().get(manager.getAllPairs().size() - 1).getPerson2());
+        TextView lastPair = getView().findViewById(R.id.last_event);
+
+        Pair p;
+        if(!undoStack.isEmpty()){
+            p = undoStack.peek();
+            lastPair.setText(p.getPerson1() + " & " + p.getPerson2());
+        } else if (!manager.getAllPairs().isEmpty()) {
+            p = manager.getAllPairs().get(manager.getAllPairs().size()-1);
+            lastPair.setText(p.getPerson1() + " & " + p.getPerson2());
         }
     }
 
@@ -228,7 +263,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
         selectedItems.clear();
         unPimpButton(resetSelection);
-        unPimpButton(addPair);
     }
 
     public DataManager getManager() {

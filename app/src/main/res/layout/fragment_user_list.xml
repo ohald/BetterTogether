@@ -29,10 +29,10 @@
         android:gravity="center_horizontal">
 
         <Button
-            android:id="@+id/create_pair_button"
+            android:id="@+id/undo_pair_button"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/add_pair" />
+            android:text="@string/undo_pair" />
 
         <Button
             android:id="@+id/reset_selection_button"
