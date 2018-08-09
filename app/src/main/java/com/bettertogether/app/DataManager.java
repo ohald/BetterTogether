@@ -9,6 +9,7 @@ import db.CallbackWrapper;
 
 import db.Dao;
 import db.responseparsers.ResponsePojoConverter;
+import db.responseparsers.RewardResponse;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -18,6 +19,7 @@ public class DataManager {
 
     private List<Pair> allPairs;
     private List<Person> activeUsers;
+    private List<RewardResponse> rewards;
 
     private DataUpdateListener listener;
 
@@ -28,6 +30,7 @@ public class DataManager {
         this.listener = listener;
         allPairs = new ArrayList<>();
         activeUsers = new ArrayList<>();
+        this.rewards = new ArrayList<>();
 
         validateToken();
 
@@ -58,6 +61,7 @@ public class DataManager {
     private void initializeData() {
         updatePairs();
         updateActiveUsers();
+        initializeRewards();
     }
 
     private void updatePairs() {
@@ -75,8 +79,10 @@ public class DataManager {
     public void addPair(Pair pair) {
         dao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response))
+                    if (isValidResponse(throwable, response)) {
                         updatePairs();
+                        checkForNewReward();
+                    }
                 }
                 ));
     }
@@ -84,8 +90,28 @@ public class DataManager {
     private void updateActiveUsers() {
         dao.getAllActivePersons().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
+                    if(isValidResponse(throwable, response))
                     activeUsers = ResponsePojoConverter.personResponseToPerson(response.body());
                     listener.updateGrid();
+                }));
+    }
+
+    private void checkForNewReward() {
+        dao.getRewards().enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if(isValidResponse(throwable, response))
+                        if(response.body().size() != rewards.size()){
+                            rewards = response.body();
+                            listener.rewardReached(rewards.get(rewards.size()-1).getRewardType());
+                        }
+                }));
+    }
+
+    private void initializeRewards() {
+        dao.getRewards().enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if(isValidResponse(throwable, response))
+                            rewards = response.body();
                 }));
     }
 

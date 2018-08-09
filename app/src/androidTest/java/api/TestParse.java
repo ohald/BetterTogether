@@ -16,9 +16,11 @@ import db.Dao;
 
 import com.bettertogether.app.Pair;
 
+import db.RewardType;
 import db.responseparsers.PairResponse;
 import db.responseparsers.PersonResponse;
 import db.responseparsers.ResponsePojoConverter;
+import db.responseparsers.RewardResponse;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.mockwebserver.MockResponse;
@@ -90,6 +92,25 @@ public class TestParse {
         );
     }
 
+    private void addRewardResponse(){
+        mockBackend.enqueue(
+                new MockResponse().setBody("[{" +
+                        "\"date\": \"10000\"" +
+                        ", \"reward_type\": \"pizza\"" +
+                        ", \"used_reward\" : \"false\"}]")
+        );
+    }
+
+
+
+    @Test
+    public void canParseRewardResponse() throws IOException{
+        addRewardResponse();
+        RewardResponse res = dao.getRewards().execute().body().get(0);
+
+        assertThat(res.getRewardType(), equalTo(RewardType.PIZZA));
+        assertThat(res.getUsedReward(), equalTo(false));
+    }
 
     @Test
     public void canParsePersonResponse() throws IOException {
