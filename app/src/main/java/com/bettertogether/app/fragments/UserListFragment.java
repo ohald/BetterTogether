@@ -35,15 +35,11 @@ import com.bettertogether.app.Person;
 
 
 public class UserListFragment extends Fragment implements DataUpdateListener {
-        private ArrayList<Integer> selectedItems;
+    private ArrayList<Integer> selectedItems;
 
     private DataManager manager;
-
     private GridView gridView;
 
-    private boolean popupIsActive;
-    private Button claimCake;
-    private Button claimPizza;
     private Button resetSelection;
 
     private int selectionColor;
@@ -86,26 +82,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
                 unPimpButton(undo);
         });
 
-        claimCake = getView().findViewById(R.id.reset_cake);
-        claimCake.setOnClickListener(btn -> {
-            if (manager.getUnusedCake() > 0) {
-                new RewardPopup(this).claimReward(RewardType.CAKE);
-            } else {
-                Toast.makeText(getContext(), "You don't have any cake to claim",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        claimPizza = getView().findViewById(R.id.reset_pizza);
-        claimPizza.setOnClickListener(btn -> {
-            if (manager.getUnusedPizza() > 0) {
-                new RewardPopup(this).claimReward(RewardType.PIZZA);
-            } else {
-                Toast.makeText(getContext(), "You don't have any pizza to claim",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -141,32 +117,10 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         if (selectedItems.size() >= 2)
             createPair();
     }
-    
+
     private void pimpButton(Button button) {
         button.getBackground().setColorFilter(pimpedButtonColor, PorterDuff.Mode.MULTIPLY);
     }
-
-    void setUpGridView() {
-        List<Person> persons = manager.getActiveUsers();
-
-        setGridColumnNumber(persons.size());
-        UserListAdapter adapter = new UserListAdapter(getContext(), persons);
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener((adapterView, view, position, l) ->
-                selectItemAtPosition(position));
-
-
-        disableScrolling();
-    }
-
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void disableScrolling() {
-        gridView.setOnTouchListener((View v, MotionEvent e) ->
-                e.getAction() == MotionEvent.ACTION_MOVE);
-        gridView.setVerticalScrollBarEnabled(false);
-    }
-
 
     @SuppressLint("CheckResult")
     private void createPair() {
@@ -209,28 +163,13 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         }, 5000);
     }
 
-    public void createRewardPopupIfReachedReward() {
-        if (manager.isRewardReached(RewardType.PIZZA)) {
-            popupIsActive = true;
-            new RewardPopup(this).whistle(RewardType.PIZZA);
-        }
-        if (manager.isRewardReached(RewardType.CAKE)) {
-            popupIsActive = true;
-            new RewardPopup(this).whistle(RewardType.CAKE);
-        }
+    @Override
+    public void rewardReached(RewardType type) {
+        new RewardPopup(this).whistle(type);
     }
 
-    public void setPopupIsActiveFalse() {
-        this.popupIsActive = false;
-
-    }
-
-    private void writeStatus() {
-        if (!popupIsActive) {
-            createRewardPopupIfReachedReward();
-        }
-
-        pimpIfAvailableRewards();
+    @Override
+    public void updateStatus() {
         TextView lastPair = getView().findViewById(R.id.last_event);
 
         Pair p;
@@ -247,16 +186,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         button.getBackground().clearColorFilter();
     }
 
-    private void pimpIfAvailableRewards() {
-        if (manager.getUnusedCake() > 0)
-            pimpButton(claimCake);
-        else
-            unPimpButton(claimCake);
-        if (manager.getUnusedPizza() > 0)
-            pimpButton(claimPizza);
-        else
-            unPimpButton(claimPizza);
-    }
 
     private void resetSelectedPersons() {
         for (Integer i : selectedItems)
@@ -264,11 +193,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         selectedItems.clear();
         unPimpButton(resetSelection);
     }
-
-    public DataManager getManager() {
-        return manager;
-    }
-
 
     @Override
     public void responseError(int code, String message) {
@@ -280,12 +204,23 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
     @Override
     public void updateGrid() {
-        setUpGridView();
+        List<Person> persons = manager.getActiveUsers();
+
+        setGridColumnNumber(persons.size());
+        UserListAdapter adapter = new UserListAdapter(getContext(), persons);
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener((adapterView, view, position, l) ->
+                selectItemAtPosition(position));
+
+        disableScrolling();
     }
 
-    @Override
-    public void updateStatus() {
-        writeStatus();
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void disableScrolling() {
+        gridView.setOnTouchListener((View v, MotionEvent e) ->
+                e.getAction() == MotionEvent.ACTION_MOVE);
+        gridView.setVerticalScrollBarEnabled(false);
     }
 
     public void setGridColumnNumber(int people) {

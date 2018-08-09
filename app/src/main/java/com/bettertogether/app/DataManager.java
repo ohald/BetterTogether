@@ -6,11 +6,8 @@ import java.util.List;
 
 import db.ApiClient;
 import db.CallbackWrapper;
-import db.dao.PairDao;
-import db.dao.PersonDao;
-import db.dao.RewardDao;
-import db.RewardType;
 
+import db.Dao;
 import db.responseparsers.ResponsePojoConverter;
 import db.responseparsers.RewardResponse;
 import retrofit2.Response;
@@ -18,38 +15,22 @@ import retrofit2.Retrofit;
 
 public class DataManager {
 
-    private PersonDao personDao;
-    private PairDao pairDao;
-    private RewardDao rewardDao;
+    private Dao dao;
 
     private List<Pair> allPairs;
     private List<Person> activeUsers;
-    private List<Pair> pizzaPairs;
-    private List<Pair> cakePairs;
-    private int cakeThreshold;
-    private int pizzaThreshold;
-
-    private int unusedCake;
-    private int unusedPizza;
+    private List<RewardResponse> rewards;
 
     private DataUpdateListener listener;
 
     public DataManager(String token, DataUpdateListener listener) {
         Retrofit apiClient = ApiClient.getRetrofitInstance(token);
-        personDao = apiClient.create(PersonDao.class);
-        pairDao = apiClient.create(PairDao.class);
-        rewardDao = apiClient.create(RewardDao.class);
+        dao = apiClient.create(Dao.class);
 
         this.listener = listener;
-
-        cakeThreshold = 10000;
-        pizzaThreshold = 10000;
-        unusedCake = -1;
-        unusedPizza = -1;
-        pizzaPairs = new ArrayList<>();
-        cakePairs = new ArrayList<>();
         allPairs = new ArrayList<>();
         activeUsers = new ArrayList<>();
+        this.rewards = new ArrayList<>();
 
         validateToken();
 
@@ -70,154 +51,73 @@ public class DataManager {
     private void validateToken() {
         // This is an arbitrary choice of request, to see what
         // responses we get.
-        rewardDao.getThreshold(RewardType.PIZZA).enqueue(new CallbackWrapper<>((throwable, response) -> {
+        dao.getHistory().enqueue(new CallbackWrapper<>((throwable, response) -> {
             if (isValidResponse(throwable, response))
                 initializeData();
         }));
 
     }
 
-    public boolean isRewardReached(RewardType type) {
-        if (pizzaPairs.size() >= pizzaThreshold && type == RewardType.PIZZA) {
-            addReward(RewardType.PIZZA);
-            return true;
-        }
-        if (cakePairs.size() >= cakeThreshold && type == RewardType.CAKE) {
-            addReward(RewardType.CAKE);
-            return true;
-        }
-        return false;
-    }
-
     private void initializeData() {
         updatePairs();
-        updateThresholds();
-        updateUnusedRewards();
         updateActiveUsers();
+        initializeRewards();
     }
 
     private void updatePairs() {
-        pairDao.getHistory().enqueue(
+        dao.getHistory().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
+                    if(isValidResponse(throwable, response)) {
                         this.allPairs = ResponsePojoConverter.pairResponseToPair(response.body());
                         listener.updateStatus();
+
                     }
                 }));
 
-        pairDao.getPairsSinceLastReward(RewardType.PIZZA).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        this.pizzaPairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                        listener.updateStatus();
-                    }
-                })
-        );
-
-        pairDao.getPairsSinceLastReward(RewardType.CAKE).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        this.cakePairs = ResponsePojoConverter.pairResponseToPair(response.body());
-                        listener.updateStatus();
-                    }
-                })
-        );
-
     }
-
-
-    private void updateThresholds() {
-        rewardDao.getThreshold(RewardType.PIZZA).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        this.pizzaThreshold = response.body().get(0).getThreshold();
-                        listener.updateStatus();
-                    }
-                }));
-        rewardDao.getThreshold(RewardType.CAKE).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        this.cakeThreshold = response.body().get(0).getThreshold();
-                        listener.updateStatus();
-                    }
-                }));
-    }
-
-
-    private void updateUnusedRewards() {
-        rewardDao.numberOfUnusedRewards(RewardType.PIZZA).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    this.unusedPizza = response.body();
-                    listener.updateStatus();
-
-                })
-        );
-        rewardDao.numberOfUnusedRewards(RewardType.CAKE).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    this.unusedCake = response.body();
-                    listener.updateStatus();
-                })
-        );
-    }
-
-    private void updateActiveUsers() {
-        personDao.getAllActivePersons().enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        activeUsers = ResponsePojoConverter.personResponseToPerson(response.body());
-                        listener.updateGrid();
-                    }
-                }));
-    }
-
-
-    private void addReward(RewardType type) {
-        RewardResponse res = ResponsePojoConverter.rewardToRewardResponse(
-                new Reward(type));
-
-        rewardDao.addReward(res).enqueue(
-                new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response)) {
-                        updatePairs();
-                        updateUnusedRewards();
-                        listener.updateStatus();
-                    }
-                }));
-    }
-
 
     public void addPair(Pair pair) {
-        pairDao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
+        dao.insertPair(ResponsePojoConverter.pairToPairResponse(pair)).enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response))
+                    if (isValidResponse(throwable, response)) {
                         updatePairs();
+                        checkForNewReward();
+                    }
                 }
                 ));
     }
 
-
-    public void setUseVariableToTrue(RewardType rewardType) {
-        rewardDao.updateReward(rewardType.toString()).enqueue(
+    private void updateActiveUsers() {
+        dao.getAllActivePersons().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
-                    if (isValidResponse(throwable, response))
-                        updateUnusedRewards();
-                }
-                )
-        );
+                    if(isValidResponse(throwable, response))
+                    activeUsers = ResponsePojoConverter.personResponseToPerson(response.body());
+                    listener.updateGrid();
+                }));
+    }
 
+    private void checkForNewReward() {
+        dao.getRewards().enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if(isValidResponse(throwable, response))
+                        if(response.body().size() != rewards.size()){
+                            rewards = response.body();
+                            listener.rewardReached(rewards.get(rewards.size()-1).getRewardType());
+                        }
+                }));
+    }
+
+    private void initializeRewards() {
+        dao.getRewards().enqueue(
+                new CallbackWrapper<>((throwable, response) -> {
+                    if(isValidResponse(throwable, response))
+                            rewards = response.body();
+                }));
     }
 
 
     public List<Pair> getAllPairs() {
         return allPairs;
-    }
-
-    public int getUnusedCake() {
-        return unusedCake;
-    }
-
-    public int getUnusedPizza() {
-        return unusedPizza;
     }
 
     public List<Person> getActiveUsers() {
