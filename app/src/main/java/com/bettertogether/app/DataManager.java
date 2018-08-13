@@ -87,7 +87,7 @@ public class DataManager {
                 ));
     }
 
-    private void updateActiveUsers() {
+    public void updateActiveUsers() {
         dao.getAllActivePersons().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     if(isValidResponse(throwable, response))

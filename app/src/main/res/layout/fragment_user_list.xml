@@ -1,69 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swiperefresh"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-    <GridView
-        android:id="@+id/user_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_above="@+id/buttons"
-        android:layout_below="@id/prev_event"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:stretchMode="columnWidth"
-        android:numColumns="auto_fit"
-        />
-
-    <LinearLayout
-        android:id="@+id/buttons"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="50dp"
-        android:gravity="center_horizontal">
+        android:layout_height="match_parent"
+        android:keepScreenOn="true">
 
-        <Button
-            android:id="@+id/undo_pair_button"
-            android:layout_width="150dp"
+        <GridView
+            android:id="@+id/user_list"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/undo_pair" />
+            android:layout_above="@+id/buttons"
+            android:layout_below="@id/prev_event"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="15dp"
 
-        <Button
-            android:id="@+id/reset_selection_button"
-            android:layout_width="150dp"
+            android:horizontalSpacing="10dp"
+            android:numColumns="auto_fit"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="10dp" />
+
+        <LinearLayout
+
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/reset_selection" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="50dp"
+            android:gravity="center_horizontal">
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/undo_pair_button"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="@string/undo_pair" />
 
-    <LinearLayout
-        android:id="@+id/prev_event"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="30dp"
-        android:gravity="center_horizontal">
+            <Button
+                android:id="@+id/reset_selection_button"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="@string/reset_selection" />
 
-        <TextView
-            android:layout_width="130dp"
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/prev_event"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/last_ppm_event"
-            android:textSize="12sp" />
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="30dp"
+            android:gravity="center_horizontal">
 
-        <TextView
-            android:id="@+id/last_event"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="15sp" />
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:text="@string/last_ppm_event"
+                android:textSize="12sp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/last_event"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="15sp" />
+
+        </LinearLayout>
 
 
-</RelativeLayout>
+    </RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
