@@ -99,8 +99,15 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         if(manager == null){
             return;
         }
+
+        //set number of columns in grid
         int num = manager.getActiveUsers().size();
         setGridColumnNumber(num);
+
+        //deselect on screen orientation change
+        selectedItems.clear();
+        unPimpButton(resetSelection);
+
 
     }
 
