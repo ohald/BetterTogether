@@ -10,7 +10,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class ApiClient {
 
     private static Retrofit retrofit;
-    private static final String BASE_URL = "http://bettertogether.azurewebsites.net";
+    private static final String BASE_URL = "https://bettertogether.azurewebsites.net";
 
     //precondition: token is never empty in host
     private static String token = "";
