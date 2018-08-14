@@ -41,8 +41,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     private DataManager manager;
     private GridView gridView;
 
-    private Button resetSelection;
-
     private int selectionColor;
     private int pimpedButtonColor;
     private Stack<Pair> undoStack;
@@ -77,8 +75,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         //creates load symbol on startup
         refreshLayout.setRefreshing(true);
 
-        resetSelection = getView().findViewById(R.id.reset_selection_button);
-        resetSelection.setOnClickListener(view12 -> resetSelectedPersons());
         undo = getView().findViewById(R.id.undo_pair_button);
         undo.setOnClickListener(btn -> {
             if (!undoStack.isEmpty()) {
@@ -106,7 +102,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
 
         //deselect on screen orientation change
         selectedItems.clear();
-        unPimpButton(resetSelection);
 
 
     }
@@ -115,18 +110,12 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         if (selectedItems.contains(position)) {
             gridView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
             selectedItems.remove(selectedItems.indexOf(position));
-
-            // if nothing to de-select
-            if(selectedItems.size() == 0)
-                unPimpButton(resetSelection);
             return;
         }
 
         if (selectedItems.size() >= 2) return;
 
         selectedItems.add(position);
-        pimpButton(resetSelection);
-
         gridView.getChildAt(position).setBackgroundColor(selectionColor);
 
         if (selectedItems.size() >= 2)
@@ -206,7 +195,6 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         for (Integer i : selectedItems)
             gridView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
         selectedItems.clear();
-        unPimpButton(resetSelection);
     }
 
     @Override
