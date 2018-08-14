@@ -100,7 +100,7 @@ public class DataManager {
         dao.getRewards().enqueue(
                 new CallbackWrapper<>((throwable, response) -> {
                     if(isValidResponse(throwable, response))
-                        if(response.body().size() != rewards.size()){
+                        if(response.body().size() > rewards.size()){
                             rewards = response.body();
                             listener.rewardReached(rewards.get(rewards.size()-1).getRewardType());
                         }
