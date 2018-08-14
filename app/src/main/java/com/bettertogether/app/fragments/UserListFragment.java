@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -79,13 +80,18 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         undo.setOnClickListener(btn -> {
             if (!undoStack.isEmpty()) {
                 Pair p = undoStack.pop();
-                Toast.makeText(getContext(), p.getPerson1() + " & " + p.getPerson2() + " undone", Toast.LENGTH_SHORT).show();
-                updateStatus();
+                showToast(p.getPerson1() + " & " + p.getPerson2() + " undone");
             }
             if(undoStack.isEmpty())
                 unPimpButton(undo);
         });
 
+    }
+
+    private void showToast(String s){
+        Toast t = Toast.makeText(getContext(), s, Toast.LENGTH_SHORT);
+        t.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0,8);
+        t.show();
     }
 
     @Override
@@ -129,8 +135,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
     @SuppressLint("CheckResult")
     private void createPair() {
         if (selectedItems.size() < 2) {
-            Toast.makeText(getContext(), "You need to select two users for pair programming",
-                    Toast.LENGTH_SHORT).show();
+            showToast("You need to select two users for pair programming");
             return;
         }
 
@@ -144,9 +149,8 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
         resetSelectedWithDelay();
         updateStatus();
 
-        Toast.makeText(getContext(),
-                "Added pair programming with: " + pair.getPerson1() +
-                        " and " + pair.getPerson2(), Toast.LENGTH_SHORT).show();
+        showToast("Added pair programming with: " + pair.getPerson1() +
+                        " and " + pair.getPerson2());
     }
 
     // Used to show the selection of the second person
