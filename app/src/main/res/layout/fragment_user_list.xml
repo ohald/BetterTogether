@@ -41,12 +41,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/undo_pair" />
 
-            <Button
-                android:id="@+id/reset_selection_button"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:text="@string/reset_selection" />
-
         </LinearLayout>
 
         <LinearLayout
