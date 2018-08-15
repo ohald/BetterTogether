@@ -81,6 +81,7 @@ public class UserListFragment extends Fragment implements DataUpdateListener {
             if (!undoStack.isEmpty()) {
                 Pair p = undoStack.pop();
                 showToast(p.getPerson1() + " & " + p.getPerson2() + " undone");
+                updateStatus();
             }
             if(undoStack.isEmpty())
                 unPimpButton(undo);
